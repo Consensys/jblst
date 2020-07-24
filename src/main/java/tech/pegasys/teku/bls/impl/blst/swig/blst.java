@@ -8,7 +8,6 @@
 
 package tech.pegasys.teku.bls.impl.blst.swig;
 
-@javax.annotation.processing.Generated("SWIG")
 public class blst {
   public static void scalar_from_uint32(scalar ret, long[] a) {
     blstJNI.scalar_from_uint32(scalar.getCPtr(ret), ret, a);

@@ -1,5 +1,6 @@
 plugins {
     id "com.jfrog.bintray" version "1.8.1"
+    id 'maven-publish'
 }
 
 apply plugin: 'java'
@@ -7,8 +8,9 @@ apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'tech.pegasys'
+version = '0.1.0-RELEASE'
 
-sourceCompatibility = 11 // java 8
+sourceCompatibility = 11
 targetCompatibility = 11
 
 repositories {
@@ -53,5 +55,30 @@ install {
 wrapper {
     gradleVersion = "6.5.1"
     distributionType = Wrapper.DistributionType.ALL
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'tech.pegasys'
+            artifactId = 'jblst'
+            version = '0.1.0'
+
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publish = true
+    pkg {
+        repo = 'generic'
+        name = 'gradle-project'
+        userOrg = 'bintray_user'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
+    }
 }
 
