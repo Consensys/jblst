@@ -1,0 +1,57 @@
+plugins {
+    id "com.jfrog.bintray" version "1.8.1"
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+
+group = 'tech.pegasys'
+
+sourceCompatibility = 11 // java 8
+targetCompatibility = 11
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+  compile 'com.google.guava:guava:18.0'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+// To specify a license in the pom:
+install {
+  repositories.mavenInstaller {
+    pom.project {
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
+    }
+  }
+}
+
+wrapper {
+    gradleVersion = "6.5.1"
+    distributionType = Wrapper.DistributionType.ALL
+}
+
