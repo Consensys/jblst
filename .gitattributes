@@ -8,3 +8,4 @@
 *.so binary
 *.gz binary
 *.ssz binary
+*.png binary
