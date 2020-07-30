@@ -78,15 +78,17 @@ publishing {
 }
 
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
+    user = findProperty("bintrayUser")
+    key = findProperty("bintrayApiKey")
     publish = true
+    setPublications("mavenJava")
+    setConfigurations("archives")
     pkg {
-        repo = 'generic'
-        name = 'gradle-project'
-        userOrg = 'bintray_user'
+        userOrg = 'pegasys'
+        repo = 'jblst'
+        name = 'tech.pegasys'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
+        vcsUrl = 'https://github.com/Nashatyrev/jblst'
     }
 }
 
