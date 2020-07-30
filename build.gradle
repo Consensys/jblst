@@ -84,9 +84,9 @@ bintray {
     setPublications("mavenJava")
     setConfigurations("archives")
     pkg {
-        userOrg = 'pegasys'
-        repo = 'jblst'
-        name = 'tech.pegasys'
+        userOrg = 'consensys'
+        repo = 'pegasys-repo'
+        name = 'jblst'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/Nashatyrev/jblst'
     }
