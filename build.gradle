@@ -8,7 +8,7 @@ apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'tech.pegasys'
-version = '0.1.0-RELEASE'
+version = '0.2.0-RELEASE'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -74,7 +74,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'tech.pegasys'
             artifactId = 'jblst'
-            version = '0.1.0'
+            version = project.version
             pom {
                 licenses {
                     license {
