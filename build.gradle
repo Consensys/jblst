@@ -41,6 +41,9 @@ test {
     reports {
         junitXml.enabled = true
     }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 
