@@ -8,7 +8,7 @@ apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'tech.pegasys'
-version = '0.1.0-RELEASE'
+version = '0.2.0-RELEASE'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -20,6 +20,10 @@ repositories {
 
 dependencies {
   compile 'com.google.guava:guava:18.0'
+
+  testImplementation 'org.assertj:assertj-core:3.16.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -31,6 +35,17 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+
+test {
+    useJUnitPlatform()
+    reports {
+        junitXml.enabled = true
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
 
 artifacts {
     archives sourcesJar
@@ -62,7 +77,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'tech.pegasys'
             artifactId = 'jblst'
-            version = '0.1.0'
+            version = project.version
             pom {
                 licenses {
                     license {
