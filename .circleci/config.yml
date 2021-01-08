@@ -54,17 +54,23 @@ commands:
   #           export CARGO_HOME="$HOME/.cargo"
   #           curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.42.0
   prepare_macos:
-    description: "Prepare - macOS"
+    description: "Generate - macOS shared lib"
     steps:
       - run:
-          name: Install Packages - build tools
+          name: Generate mac os shared lib
           command: |
-            echo "hello world"
-#            # secp256k1 dependencies
-#            brew install autoconf automake libtool
-#            # rust dependencies
-#            export CARGO_HOME="$HOME/.cargo"
-#            curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.42.0
+            brew install swig
+            cd ./blst
+            sh build.sh
+            cd ./bindings
+
+            JDK=$(/usr/libexec/java_home)
+
+            mkdir java
+            cd ./java
+            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
+            gcc -march=native -fPIC -c blst_wrap.c -I$JDK/include/darwin -I$JDK/include -I..
+            gcc -shared blst_wrap.o ../../libblst.a -o libjblst.dylib
 
 jobs:
   # native-build-linux-x86-64:
