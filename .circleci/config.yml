@@ -1,13 +1,13 @@
 ---
 version: 2.1
 executors:
-  # besu_executor_med_linux: # 2cpu, 4G ram
-  #   docker:
-  #     - image: circleci/openjdk:11.0.4-jdk-stretch
-  #   resource_class: medium
-  #   working_directory: ~/project
-  #   environment:
-  #     GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
+  linux_executor: # 2cpu, 4G ram
+    docker:
+      - image: circleci/openjdk:11.0.4-jdk-stretch
+    resource_class: medium
+    working_directory: ~/project
+    environment:
+      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
   mac_os_executor: # 2cpu, 4G ram
     macos:
       xcode: "11.4.0"
@@ -41,20 +41,22 @@ commands:
           command: |
             git submodule init
             git submodule update
-  # prepare_linux:
-  #   description: "Prepare - Linux x86_64"
-  #   steps:
-  #     - run:
-  #         name: Install Packages - build tools
-  #         command: |
-  #           # secp256k1 dependencies
-  #           sudo apt-get update
-  #           sudo apt-get install -y autoconf build-essential libtool
-  #           # rust dependencies
-  #           export CARGO_HOME="$HOME/.cargo"
-  #           curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.42.0
+
+  prepare_linux:
+    description: "Generate Linux shared lib"
+    steps:
+      - run:
+          name: Install Packages - build tools
+          command: |
+            echo "hello world"
+  #              # secp256k1 dependencies
+  #              sudo apt-get update
+  #              sudo apt-get install -y autoconf build-essential libtool
+  #              # rust dependencies
+  #              export CARGO_HOME="$HOME/.cargo"
+  #              curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.42.0
   prepare_macos:
-    description: "Generate - macOS shared lib"
+    description: "Generate macOS shared lib"
     steps:
       - run:
           name: Generate mac os shared lib
@@ -73,13 +75,13 @@ commands:
             gcc -shared blst_wrap.o ../../libblst.a -o libjblst.dylib
 
 jobs:
-  # native-build-linux-x86-64:
-  #   executor: besu_executor_med_linux
-  #   environment:
-  #     SKIP_GRADLE: true
-  #   steps:
-  #     - checkout_code
-  #     - prepare_linux
+  native-build-linux-x86-64:
+    executor: linux_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - prepare_linux
   #     - run:
   #         name: build
   #         command: |
@@ -112,31 +114,31 @@ jobs:
     steps:
       - checkout_code
       - prepare_macos
-#      - run:
-#          name: build
-#          command: |
-#            ./build.sh
-#      - persist_to_workspace:
-#          root: .
-#          paths:
-#            - altbn128/build/lib/*.*dylib*
-#            - bls12-381/build/lib/*.*dylib*
-#            - secp256k1/build/lib/*.*dylib*
-#      - store_artifacts:
-#          name: macOS altbn128 native build artifacts
-#          path:  altbn128/build/lib
-#          destination: altbn128_macOS_native_artifacts
-#          when: always
-#      - store_artifacts:
-#          name: macOS bls12-381 native build artifacts
-#          path:  bls12-381/build/lib
-#          destination: bls12_381_macOS_native_artifacts
-#          when: always
-#      - store_artifacts:
-#          name: macOS secp256k1 native build artifacts
-#          path:  secp256k1/build/lib
-#          destination: secp256k1_macOS_native_artifacts
-#          when: always
+  #      - run:
+  #          name: build
+  #          command: |
+  #            ./build.sh
+  #      - persist_to_workspace:
+  #          root: .
+  #          paths:
+  #            - altbn128/build/lib/*.*dylib*
+  #            - bls12-381/build/lib/*.*dylib*
+  #            - secp256k1/build/lib/*.*dylib*
+  #      - store_artifacts:
+  #          name: macOS altbn128 native build artifacts
+  #          path:  altbn128/build/lib
+  #          destination: altbn128_macOS_native_artifacts
+  #          when: always
+  #      - store_artifacts:
+  #          name: macOS bls12-381 native build artifacts
+  #          path:  bls12-381/build/lib
+  #          destination: bls12_381_macOS_native_artifacts
+  #          when: always
+  #      - store_artifacts:
+  #          name: macOS secp256k1 native build artifacts
+  #          path:  secp256k1/build/lib
+  #          destination: secp256k1_macOS_native_artifacts
+  #          when: always
   # final-assembly:
   #   executor: besu_executor_med_linux
   #   steps:
@@ -182,7 +184,7 @@ workflows:
   version: 2
   default:
     jobs:
-      # - native-build-linux-x86-64
+      - native-build-linux-x86-64
       - native-build-macos
       # - final-assembly:
       #     requires:
