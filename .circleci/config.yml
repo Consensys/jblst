@@ -81,6 +81,7 @@ commands:
       - run:
           name: Generate mac os shared lib
           command: |
+            brew install openjdk@11
             rm ./src/main/resources/x86_64/libjblst.dylib
             ./gradlew test
 
