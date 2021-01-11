@@ -77,6 +77,7 @@ commands:
 
             echo "Testing generated library"
             cp libjblst.so ../../../src/main/resources/x86_64/
+            cd ~/project
             ./gradlew --no-daemon test
 
 
@@ -112,6 +113,7 @@ commands:
 
             echo "Testing generated library works correctly"
             cp libjblst.dylib ../../../src/main/resources/x86_64/
+            cd ~/project
             ./gradlew --no-daemon test
 
 jobs:
