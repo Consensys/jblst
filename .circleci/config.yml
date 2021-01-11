@@ -116,8 +116,9 @@ commands:
             ./gradlew --no-daemon test
 
       - persist_to_workspace:
-          root: ./src/main/resources/x86_64/libjblst.dylib
-
+          root: ./src/main/resources/x86_64/
+          paths:
+            - libjblst.dylib
 
 jobs:
   native-build-linux-x86-64:
@@ -184,12 +185,12 @@ jobs:
   #          path:  secp256k1/build/lib
   #          destination: secp256k1_macOS_native_artifacts
   #          when: always
-   final-assembly:
-     executor: linux_executor
-     steps:
-       - checkout_code
-       - attach_workspace:
-           at: .
+  final-assembly:
+    executor: linux_executor
+    steps:
+      - checkout_code
+      - attach_workspace:
+          at: .
   #     - run:
   #         name: gradle
   #         command: |
@@ -231,10 +232,10 @@ workflows:
     jobs:
       - native-build-linux-x86-64
       - native-build-macos
-       - final-assembly:
-           requires:
-             - native-build-linux-x86-64
-             - native-build-macos
+      - final-assembly:
+          requires:
+            - native-build-linux-x86-64
+            - native-build-macos
       # - publish:
       #     filters:
       #       branches:
