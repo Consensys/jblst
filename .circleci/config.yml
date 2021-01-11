@@ -49,7 +49,7 @@ commands:
           name: Install Packages - build tools
           command: |
             rm ./src/main/resources/x86_64/libjblst.so
-            ./gradlew test
+            ./gradlew --no-daemon test
 
 #            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
 #            tar -xzvf v4.0.2.tar.gz
@@ -70,7 +70,7 @@ commands:
 #            mkdir java
 #            cd ./java
 #            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
-#            gcc -fPIC -c blst_wrap.c -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux -I/usr/lib/jvm/java-8-openjdk-amd64/include -I..
+#            gcc -fPIC -c blst_wrap.c -I$JAVA_HOME/include/linux -I$JAVA_HOME/include -I..
 #            cp libjblst.so ../../../src/main/resources/x86_64/
 
 
@@ -81,9 +81,10 @@ commands:
       - run:
           name: Generate mac os shared lib
           command: |
-            brew install openjdk@11
             rm ./src/main/resources/x86_64/libjblst.dylib
-            ./gradlew test
+            brew install openjdk@11
+            sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+            ./gradlew --no-daemon test
 
 #            brew install swig@4.0
 #            cd ./blst
