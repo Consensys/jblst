@@ -46,7 +46,7 @@ commands:
     description: "Generate Linux shared lib"
     steps:
       - run:
-          name: Install Packages - build tools
+          name: Generate linux shared lib
           command: |
             echo "Removing old resources"
             rm ./src/main/resources/x86_64/libjblst.so
@@ -115,6 +115,10 @@ commands:
             cd ~/project
             ./gradlew --no-daemon test
 
+      - persist_to_workspace:
+          root: ./src/main/resources/x86_64/libjblst.dylib
+
+
 jobs:
   native-build-linux-x86-64:
     executor: linux_executor
@@ -180,12 +184,12 @@ jobs:
   #          path:  secp256k1/build/lib
   #          destination: secp256k1_macOS_native_artifacts
   #          when: always
-  # final-assembly:
-  #   executor: besu_executor_med_linux
-  #   steps:
-  #     - checkout_code
-  #     - attach_workspace:
-  #         at: .
+   final-assembly:
+     executor: linux_executor
+     steps:
+       - checkout_code
+       - attach_workspace:
+           at: .
   #     - run:
   #         name: gradle
   #         command: |
@@ -227,10 +231,10 @@ workflows:
     jobs:
       - native-build-linux-x86-64
       - native-build-macos
-      # - final-assembly:
-      #     requires:
-      #       - native-build-linux-x86-64
-      #       - native-build-macos
+       - final-assembly:
+           requires:
+             - native-build-linux-x86-64
+             - native-build-macos
       # - publish:
       #     filters:
       #       branches:
