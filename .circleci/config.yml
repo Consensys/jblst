@@ -80,6 +80,10 @@ commands:
             cp libjblst.so ../../../src/main/resources/x86_64/
             cd ~/project
             ./gradlew --no-daemon test
+      - persist_to_workspace:
+          root: ./src/main/resources/x86_64/
+          paths:
+            - libjblst.so
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -114,7 +118,6 @@ commands:
             cp libjblst.dylib ../../../src/main/resources/x86_64/
             cd ~/project
             ./gradlew --no-daemon test
-
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
