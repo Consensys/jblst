@@ -74,13 +74,12 @@ commands:
             cd ./java
             swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
             gcc -fPIC -c blst_wrap.c -I$JAVA_HOME/include/linux -I$JAVA_HOME/include -I..
+            ld -G blst_wrap.o ../../libblst.a -o libjblst.so
 
             echo "Testing generated library"
             cp libjblst.so ../../../src/main/resources/x86_64/
             cd ~/project
             ./gradlew --no-daemon test
-
-
 
   prepare_macos:
     description: "Generate macOS shared lib"
