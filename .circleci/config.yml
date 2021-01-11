@@ -48,30 +48,36 @@ commands:
       - run:
           name: Install Packages - build tools
           command: |
+          # remove old resource
             rm ./src/main/resources/x86_64/libjblst.so
-            ./gradlew --no-daemon test
 
-#            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
-#            tar -xzvf v4.0.2.tar.gz
-#
-#            sudo apt-get update
-#            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex openjdk-8-jdk
-#
-#            cd swig-4.0.2/
-#            sh autogen.sh
-#            ./configure
-#            make
-#            sudo make install
-#
-#            cd ../blst
-#            sh build.sh
-#            cd ./bindings
-#
-#            mkdir java
-#            cd ./java
-#            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
-#            gcc -fPIC -c blst_wrap.c -I$JAVA_HOME/include/linux -I$JAVA_HOME/include -I..
-#            cp libjblst.so ../../../src/main/resources/x86_64/
+          # install dependencies
+            sudo apt-get update
+            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex openjdk-8-jdk
+
+          # install swig
+            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
+            tar -xzvf v4.0.2.tar.gz
+            cd swig-4.0.2/
+            sh autogen.sh
+            ./configure
+            make
+            sudo make install
+
+          # build blst
+            cd ../blst
+            sh build.sh
+            cd ./bindings
+
+          # generate linux shared library
+            mkdir java
+            cd ./java
+            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
+            gcc -fPIC -c blst_wrap.c -I$JAVA_HOME/include/linux -I$JAVA_HOME/include -I..
+
+          # test generated library works correctly
+            cp libjblst.so ../../../src/main/resources/x86_64/
+            ./gradlew --no-daemon test
 
 
 
@@ -81,24 +87,32 @@ commands:
       - run:
           name: Generate mac os shared lib
           command: |
+          # remove old resource
             rm ./src/main/resources/x86_64/libjblst.dylib
+
+          # install openjdk 11 for test execution
             brew install openjdk@11
             sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
-            ./gradlew --no-daemon test
+            JDK=$(/usr/libexec/java_home)
 
-#            brew install swig@4.0
-#            cd ./blst
-#            sh build.sh
-#            cd ./bindings
-#
-#            JDK=$(/usr/libexec/java_home)
-#
-#            mkdir java
-#            cd ./java
-#            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
-#            gcc -march=native -fPIC -c blst_wrap.c -I$JDK/include/darwin -I$JDK/include -I..
-#            gcc -shared blst_wrap.o ../../libblst.a -o libjblst.dylib
-#            cp libjblst.dylib ../../../src/main/resources/x86_64/
+          # install swig
+            brew install swig@4.0
+
+          # build blst
+            cd ./blst
+            sh build.sh
+
+          # generate mac os shared library
+            cd ./bindings
+            mkdir java
+            cd ./java
+            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
+            gcc -march=native -fPIC -c blst_wrap.c -I$JDK/include/darwin -I$JDK/include -I..
+            gcc -shared blst_wrap.o ../../libblst.a -o libjblst.dylib
+
+          # test generated library works correctly
+            cp libjblst.dylib ../../../src/main/resources/x86_64/
+            ./gradlew --no-daemon test
 
 jobs:
   native-build-linux-x86-64:
