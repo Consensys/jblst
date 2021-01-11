@@ -10,8 +10,8 @@ apply plugin: 'com.jfrog.bintray'
 group = 'tech.pegasys'
 version = '0.2.0-RELEASE'
 
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 8
+targetCompatibility = 8
 
 repositories {
     jcenter()
