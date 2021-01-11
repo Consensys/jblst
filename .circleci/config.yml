@@ -48,7 +48,7 @@ commands:
       - run:
           name: Install Packages - build tools
           command: |
-            rm libjblst.so ./src/main/resources/x86_64/
+            rm ./src/main/resources/x86_64/libjblst.so
             ./gradlew test
 
 #            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
@@ -81,7 +81,7 @@ commands:
       - run:
           name: Generate mac os shared lib
           command: |
-            rm libjblst.dylib ../../../src/main/resources/x86_64/
+            rm ./src/main/resources/x86_64/libjblst.dylib
             ./gradlew test
 
 #            brew install swig@4.0
