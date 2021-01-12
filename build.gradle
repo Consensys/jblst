@@ -8,7 +8,7 @@ apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'tech.pegasys'
-version = '0.2.0-RELEASE'
+version = '0.2.1-SNAPSHOT'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -93,9 +93,12 @@ publishing {
 }
 
 bintray {
-    user = findProperty("bintrayUser")
-    key = findProperty("bintrayApiKey")
+    user = System.getenv("BINTRAY_USER")
+    key = System.getenv("BINTRAY_API_KEY")
     publish = true
+    if (version.contains("SNAPSHOT")) {
+        override = true
+    }
     setPublications("mavenJava")
     setConfigurations("archives")
     pkg {
