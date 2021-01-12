@@ -8,7 +8,7 @@ apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'tech.pegasys'
-version = '0.2.0-RELEASE'
+version = '0.2.1-SNAPSHOT'
 
 sourceCompatibility = 11
 targetCompatibility = 11
