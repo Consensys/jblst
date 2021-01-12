@@ -96,6 +96,9 @@ bintray {
     user = findProperty("bintrayUser")
     key = findProperty("bintrayApiKey")
     publish = true
+    if (version.contains("SNAPSHOT")) {
+        override = true
+    }
     setPublications("mavenJava")
     setConfigurations("archives")
     pkg {

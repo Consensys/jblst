@@ -181,10 +181,10 @@ workflows:
             - native-build-linux-x86-64
             - native-build-macos
       - publish:
-          filters:
-            branches:
-              only:
-                - master
-                - /^release-.*/
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - /^release-.*/
           requires:
             - final-assembly
