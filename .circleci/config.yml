@@ -20,13 +20,6 @@ executors:
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
       HOMEBREW_NO_AUTO_UPDATE: true
-  windows_executor: # 2cpu, 4G ram
-    name: win/default
-    shell: powershell.exe
-    resource_class: medium
-    working_directory: ~/project
-    environment:
-      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
 
 commands:
   checkout_code:
@@ -92,7 +85,7 @@ commands:
     description: "Generate windows shared lib"
     steps:
       - run:
-          name: Generate mac os shared lib
+          name: Generate windows shared lib
           command: |
             echo "Hello windows"
             ./gradlew --no-daemon test
@@ -109,15 +102,15 @@ jobs:
     steps:
       - checkout_code
       - prepare_linux
-  native-build-macos:
+  native-build-macos-x86-64:
     executor: mac_os_executor
     environment:
       SKIP_GRADLE: true
     steps:
       - checkout_code
       - prepare_macos
-  native-build-windows:
-    executor: windows_executor
+  native-build-windows-x86-64:
+    executor: win/default
     environment:
       SKIP_GRADLE: true
     steps:
@@ -159,12 +152,13 @@ workflows:
   default:
     jobs:
       - native-build-linux-x86-64
-      - native-build-macos
-      - native-build-windows
+      - native-build-macos-x86-64
+      - native-build-windows-x86-64
       - final-assembly:
           requires:
             - native-build-linux-x86-64
-            - native-build-macos
+            - native-build-macos-x86-64
+            - native-build-windows-x86-64
       - publish:
           filters:
             branches:
