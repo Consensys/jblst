@@ -1,14 +1,14 @@
 ---
 version: 2.1
 executors:
-  linux_executor: # 2cpu, 4G ram
+  linux_executor:
     docker:
       - image: circleci/openjdk:11.0.4-jdk-stretch
     resource_class: medium
     working_directory: ~/project
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
-  mac_os_executor: # 2cpu, 4G ram
+  mac_os_executor:
     macos:
       xcode: "11.4.0"
     resource_class: medium
@@ -16,20 +16,14 @@ executors:
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
       HOMEBREW_NO_AUTO_UPDATE: true
-
-# besu_executor_med_windows: # 2cpu, 4G ram
-#   machine:
-#     image: "windows-server-2019-vs2019:stable"
-#     resource_class: medium
-#     shell: powershell.exe -ExecutionPolicy Bypass
-#   working_directory: ~/project
-#   environment:
-#     GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
-
-
-#notify:
-#  webhooks:
-#    - url: https://hyperledger-rocket-chat-hubot.herokuapp.com/hubot/circleci
+  windows_executor: # 2cpu, 4G ram
+    machine:
+      image: "windows-server-2019-vs2019:stable"
+    resource_class: medium
+    shell: powershell.exe -ExecutionPolicy Bypass
+    working_directory: ~/project
+    environment:
+      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
 
 commands:
   checkout_code:
@@ -91,6 +85,19 @@ commands:
           paths:
             - libblst.dylib
 
+  prepare_windows:
+    description: "Generate windows shared lib"
+    steps:
+      - run:
+          name: Generate mac os shared lib
+          command: |
+            echo "Hello windows"
+            ./gradlew --no-daemon test
+      - persist_to_workspace:
+          root: ./src/main/resources/x86_64/
+          paths:
+            - libblst.dylib
+
 jobs:
   native-build-linux-x86-64:
     executor: linux_executor
@@ -106,6 +113,13 @@ jobs:
     steps:
       - checkout_code
       - prepare_macos
+  native-build-windows:
+    executor: windows_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - prepare_windows
   final-assembly:
     executor: linux_executor
     steps:
