@@ -48,42 +48,13 @@ commands:
       - run:
           name: Generate linux shared lib
           command: |
-            echo "Removing old resources"
-            rm ./src/main/resources/x86_64/libjblst.so
-
-            echo "Installing swig dependencies"
-            sudo apt-get update
-            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex
-
-            echo "Installing swig"
-            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
-            tar -xzvf v4.0.2.tar.gz
-            cd swig-4.0.2/
-            sh autogen.sh
-            ./configure
-            make
-            sudo make install
-
-            echo "Building blst"
-            cd ../blst
-            sh build.sh
-
-            echo "Generating shared library"
-            cd ./bindings
-            mkdir java
-            cd ./java
-            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
-            gcc -fPIC -c blst_wrap.c -I$JAVA_HOME/include/linux -I$JAVA_HOME/include -I..
-            ld -G blst_wrap.o ../../libblst.a -o libjblst.so
-
-            echo "Testing generated library"
-            cp libjblst.so ../../../src/main/resources/x86_64/
-            cd ~/project
+            sh blst/bindings/java/linux_run.me
+            cp blst/bindings/java/libblst.so src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
-            - libjblst.so
+            - libblst.so
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -91,37 +62,13 @@ commands:
       - run:
           name: Generate mac os shared lib
           command: |
-            echo "Removing old resources"
-            rm ./src/main/resources/x86_64/libjblst.dylib
-
-            echo "Installing openjdk 11 for test execution"
-            brew install openjdk@11
-            sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
-            JDK=$(/usr/libexec/java_home)
-
-            echo "Installing swig"
-            brew install swig@4.0
-
-            echo "Building blst"
-            cd ./blst
-            sh build.sh
-
-            echo "Generating mac os shared library"
-            cd ./bindings
-            mkdir java
-            cd ./java
-            swig -java -outcurrentdir -package tech.pegasys.teku.bls.impl.blst.swig ../blst.swg
-            gcc -march=native -fPIC -c blst_wrap.c -I$JDK/include/darwin -I$JDK/include -I..
-            gcc -shared blst_wrap.o ../../libblst.a -o libjblst.dylib
-
-            echo "Testing generated library works correctly"
-            cp libjblst.dylib ../../../src/main/resources/x86_64/
-            cd ~/project
+            sh blst/bindings/java/mac_run.me
+            cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
-            - libjblst.dylib
+            - libblst.dylib
 
 jobs:
   native-build-linux-x86-64:
