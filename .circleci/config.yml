@@ -87,9 +87,10 @@ commands:
       - run:
           name: Generate windows shared lib
           command: |
+            cmd.exe
             echo "Hello windows"
             conda install -c conda-forge swig
-            sh blst/bindings/java/run.me
+            sh blst/bindings/java/windows_run.me
             cp blst/bindings/java/libblst.dll src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
