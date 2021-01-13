@@ -48,6 +48,19 @@ commands:
       - run:
           name: Generate linux shared lib
           command: |
+            echo "Installing swig dependencies"
+            sudo apt-get update
+            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex
+
+            echo "Installing swig"
+            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
+            tar -xzvf v4.0.2.tar.gz
+            cd swig-4.0.2/
+            sh autogen.sh
+            ./configure
+            make
+            sudo make install
+
             sh blst/bindings/java/linux_run.me
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
             ./gradlew --no-daemon test
