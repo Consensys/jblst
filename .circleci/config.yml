@@ -1,5 +1,9 @@
 ---
 version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
 executors:
   linux_executor:
     docker:
@@ -17,10 +21,9 @@ executors:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
       HOMEBREW_NO_AUTO_UPDATE: true
   windows_executor: # 2cpu, 4G ram
-    machine:
-      image: "windows-server-2019-vs2019:stable"
+    name: win/default
+    shell: powershell.exe
     resource_class: medium
-    shell: powershell.exe -ExecutionPolicy Bypass
     working_directory: ~/project
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
@@ -96,7 +99,7 @@ commands:
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
-            - libblst.dylib
+            - libblst.dllib
 
 jobs:
   native-build-linux-x86-64:
@@ -123,7 +126,6 @@ jobs:
   final-assembly:
     executor: linux_executor
     steps:
-      - checkout_code
       - attach_workspace:
           at: .
       - run:
