@@ -61,6 +61,7 @@ commands:
             make
             sudo make install
 
+            cd ~/project
             sh blst/bindings/java/linux_run.me
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
             ./gradlew --no-daemon test
