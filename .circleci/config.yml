@@ -75,6 +75,9 @@ commands:
       - run:
           name: Generate mac os shared lib
           command: |
+            echo "Installing swig"
+            brew install swig@4.0
+
             sh blst/bindings/java/mac_run.me
             cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
             ./gradlew --no-daemon test
