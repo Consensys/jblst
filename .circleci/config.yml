@@ -158,6 +158,7 @@ workflows:
     jobs:
       - native-build-linux-x86-64
       - native-build-macos
+      - native-build-windows
       - final-assembly:
           requires:
             - native-build-linux-x86-64
