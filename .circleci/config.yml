@@ -20,17 +20,17 @@ executors:
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
       HOMEBREW_NO_AUTO_UPDATE: true
-  windows_executor:
-    docker: # executor type
-      - image: mwaeckerlin/mingw
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
-    resource_class: medium
-    working_directory: ~/project
-    environment:
-      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
-      HOMEBREW_NO_AUTO_UPDATE: true
+#  windows_executor:
+#    docker: # executor type
+#      - image: mwaeckerlin/mingw
+#        auth:
+#          username: $DOCKERHUB_USERNAME
+#          password: $DOCKERHUB_PASSWORD
+#    resource_class: medium
+#    working_directory: ~/project
+#    environment:
+#      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
+#      HOMEBREW_NO_AUTO_UPDATE: true
 
 commands:
   checkout_code:
@@ -125,7 +125,7 @@ jobs:
       - checkout_code
       - prepare_macos
   native-build-windows-x86-64:
-    executor: windows_executor
+    executor: win/default
     environment:
       SKIP_GRADLE: true
     steps:
