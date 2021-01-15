@@ -64,9 +64,10 @@ commands:
 
             cd ~/project
             sh blst/bindings/java/run.me
+            cp blst/bindings/java/libblst.so src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
-          root: blst/bindings/java/
+          root: ./src/main/resources/x86_64/
           paths:
             - libblst.so
 
@@ -84,9 +85,10 @@ commands:
             brew install swig@4.0
 
             sh blst/bindings/java/run.me
+            cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
-          root: blst/bindings/java/
+          root: ./src/main/resources/x86_64/
           paths:
             - libblst.dylib
 
@@ -96,15 +98,14 @@ commands:
       - run:
           name: Generate windows shared lib
           command: |
-            bash.exe
-            echo "Hello windows"
             choco install swig --version=4.0.2
             choco install mingw
-            export MSYSTEM="MINGW"
+            $Env:MSYSTEM = "MINGW"
             sh blst/bindings/java/run.me
+            cp blst/bindings/java/libblst.dll src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
-          root: blst/bindings/java/
+          root: ./src/main/resources/x86_64/
           paths:
             - libblst.dllib
 

@@ -1,0 +1,5 @@
+# Ignore everything in this directory
+*
+# Except this file
+# This directory is used to put the native libraries during ci builds
+!.gitignore
