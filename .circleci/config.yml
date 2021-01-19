@@ -101,7 +101,7 @@ commands:
             choco install mingw
             choco install swig
             $Env:MSYSTEM = "MINGW"
-            $Env:CC = "c++"
+            $Env:CC = "gcc"
             sh blst/bindings/java/run.me
             cp blst/bindings/java/libblst.dll src/main/resources/x86_64/
             ./gradlew --no-daemon test
