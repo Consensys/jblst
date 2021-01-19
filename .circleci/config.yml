@@ -99,8 +99,9 @@ commands:
           name: Generate windows shared lib
           command: |
             choco install mingw
+            choco install swig
             $Env:MSYSTEM = "MINGW"
-            $Env:CC = "gcc"
+            $Env:CC = "c++"
             sh blst/bindings/java/run.me
             cp blst/bindings/java/libblst.dll src/main/resources/x86_64/
             ./gradlew --no-daemon test
