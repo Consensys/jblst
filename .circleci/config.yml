@@ -98,7 +98,7 @@ commands:
       - run:
           name: Generate windows shared lib
           command: |
-            choco install mingw
+            choco install mingw --force --x64
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
