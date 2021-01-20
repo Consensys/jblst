@@ -111,21 +111,21 @@ commands:
             - libblst.dllib
 
 jobs:
-  native-build-linux-x86-64:
+  linux-build:
     executor: linux_executor
     environment:
       SKIP_GRADLE: true
     steps:
       - checkout_code
       - prepare_linux
-  native-build-macos-x86-64:
+  mac-os-build:
     executor: mac_os_executor
     environment:
       SKIP_GRADLE: true
     steps:
       - checkout_code
       - prepare_macos
-  native-build-windows-x86-64:
+  windows-build:
     executor: win/default
     environment:
       SKIP_GRADLE: true
@@ -167,14 +167,14 @@ workflows:
   version: 2
   default:
     jobs:
-      - native-build-linux-x86-64
-      - native-build-macos-x86-64
-      - native-build-windows-x86-64
+      - linux-build
+      - mac-os-build
+      - windows-build
       - final-assembly:
           requires:
-            - native-build-linux-x86-64
-            - native-build-macos-x86-64
-            - native-build-windows-x86-64
+            - linux-build
+            - mac-os-build
+            - windows-build
       - publish:
           filters:
             branches:
