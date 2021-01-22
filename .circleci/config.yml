@@ -97,7 +97,7 @@ commands:
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
-            - libblst.dllib
+            - libblst.dll
 
 jobs:
   linux-build:
