@@ -121,9 +121,10 @@ jobs:
     steps:
       - checkout_code
       - prepare_windows
-  final-assembly:
+  assemble-and-publish:
     executor: linux_executor
     steps:
+      - checkout_code
       - attach_workspace:
           at: .
       - run:
@@ -132,26 +133,10 @@ jobs:
             echo "Copying attached native libraries to resources"
             cp libblst.dylib ./src/main/resources/x86_64/
             cp libblst.so ./src/main/resources/x86_64/
+            cp blst.dll ./src/main/resources/x86_64/
             ./gradlew --no-daemon --parallel build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - build/libs/*.jar
-      - store_artifacts:
-          name: Final jblst build artifacts
-          path: build/libs
-          destination: jblst_jars
-          when: always
-  publish:
-    executor: linux_executor
-    steps:
-      - checkout_code
-      - attach_workspace:
-          at: .
-      - run:
-          name: Publish
-          command: |
             ./gradlew --no-daemon --parallel bintrayUpload
+
 workflows:
   version: 2
   default:
@@ -159,16 +144,13 @@ workflows:
       - linux-build
       - mac-os-build
       - windows-build
-      - final-assembly:
+      - assemble-and-publish:
           requires:
             - linux-build
             - mac-os-build
             - windows-build
-      - publish:
-          filters:
-            branches:
-              only:
-                - master
-                - /^release-.*/
-          requires:
-            - final-assembly
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - /^release-.*/
