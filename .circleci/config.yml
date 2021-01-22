@@ -92,12 +92,12 @@ commands:
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
             sh blst/bindings/java/run.me
-            cp blst/bindings/java/libblst.dll src/main/resources/x86_64/
+            cp blst/bindings/java/libblst.dllib src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
-            - libblst.dll
+            - libblst.dllib
 
 jobs:
   linux-build:
