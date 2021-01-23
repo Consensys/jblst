@@ -157,11 +157,11 @@ workflows:
 #      - mac-os-build
 #      - windows-build
       - arm64-linux-build
-      - assemble-and-publish:
-          requires:
-            - linux-build
-            - mac-os-build
-            - windows-build
+      # - assemble-and-publish:
+      #     requires:
+      #       - linux-build
+      #       - mac-os-build
+      #       - windows-build
 #          filters:
 #            branches:
 #              only:
