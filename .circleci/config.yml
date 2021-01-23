@@ -12,16 +12,6 @@ executors:
     working_directory: ~/project
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
-#  arm_executor:
-#    docker:
-#      - image: circleci/openjdk:11.0.4-jdk-stretch
-#    resource_class: medium
-#    working_directory: ~/project
-#    environment:
-#      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
-#      DOCKER_BUILDKIT: 1
-#      BUILDX_PLATFORMS: linux/arm64
-
   mac_os_executor:
     macos:
       xcode: "11.4.0"
@@ -163,9 +153,10 @@ workflows:
   version: 2
   default:
     jobs:
-      - linux-build
-      - mac-os-build
-      - windows-build
+      - x86-64-linux-build
+#      - mac-os-build
+#      - windows-build
+      - arm64-linux-build
       - assemble-and-publish:
           requires:
             - linux-build
