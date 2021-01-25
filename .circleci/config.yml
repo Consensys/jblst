@@ -109,6 +109,7 @@ commands:
       - run:
           name: Prepare armv8 build
           command: |
+            chmod a+x .circleci/*.sh
             .circleci/build-armv8.sh
 
 jobs:
