@@ -27,11 +27,11 @@ docker run --privileged --cap-add=ALL --security-opt="seccomp=unconfined" -d -ti
 DOCKER_CONTAINER_ID=$(docker ps --last 4 | grep $CONTAINER_DISTRO | awk '{print $1}')
 
 docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get update
-docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get install -y autoconf libpcre3 libpcre3-dev bison flex curl tar
+docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get install -y autoconf libpcre3 libpcre3-dev bison flex curl tar openjdk-11-jdk
 docker exec --privileged -ti $DOCKER_CONTAINER_ID curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
 docker exec --privileged -ti $DOCKER_CONTAINER_ID tar -xzvf v4.0.2.tar.gz
 docker exec --privileged -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-  "cd swig-4.0.2/; sh autogen.sh; ./configure; make; sudo make install"
+  "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; sudo make install"
 
 #find dist -name \*.\*$EXT
 
