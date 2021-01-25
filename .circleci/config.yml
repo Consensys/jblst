@@ -109,8 +109,11 @@ commands:
       - run:
           name: Prepare armv8 build
           command: |
+            cd blst
+            export BLST_MODULE_HEAD=$(git rev-parse head)
+            cd ..
             chmod a+x .circleci/*.sh
-            .circleci/build-armv8.sh 7f6aa706670aa090f0cb69850bc1c388b459c438
+            .circleci/build-armv8.sh $BLST_MODULE_HEAD
 
 jobs:
   x86-64-linux-build:
