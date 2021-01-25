@@ -130,18 +130,18 @@ commands:
             echo "Installing swig dependencies"
             sudo apt-get update
             sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex gcc-arm-linux-gnueabihf
-            export CC=arm-linux-gnueabihf-gcc make
 
             echo "Installing swig"
             curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
             tar -xzvf v4.0.2.tar.gz
             cd swig-4.0.2/
             sh autogen.sh
-            ./configure --host=arm
+            ./configure
             make
             sudo make install
 
             cd ~/project
+            export CC=arm-linux-gnueabihf-gcc make
             sh blst/bindings/java/run.me
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
             ./gradlew --no-daemon test
