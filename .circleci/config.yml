@@ -129,8 +129,8 @@ commands:
           command: |
             echo "Installing swig dependencies"
             sudo apt-get update
-            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex aarch64-linux-gnu-gcc
-            export CC=aarch64-linux-gnu-gcc
+            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex gcc-arm-linux-gnueabihf
+            export CC=arm-linux-gnueabihf-gcc make
 
             echo "Installing swig"
             curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
