@@ -30,20 +30,8 @@ docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get update
 docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get install -y autoconf libpcre3 libpcre3-dev bison flex curl tar
 docker exec --privileged -ti $DOCKER_CONTAINER_ID curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
 docker exec --privileged -ti $DOCKER_CONTAINER_ID tar -xzvf v4.0.2.tar.gz
-docker exec --privileged -ti $DOCKER_CONTAINER_ID cd swig-4.0.2/
-docker exec --privileged -ti $DOCKER_CONTAINER_ID sh autogen.sh
-docker exec --privileged -ti $DOCKER_CONTAINER_ID ./configure
-docker exec --privileged -ti $DOCKER_CONTAINER_ID make
-docker exec --privileged -ti $DOCKER_CONTAINER_ID sudo make install
-#docker exec --privileged -ti $DOCKER_CONTAINER_ID
-#docker exec --privileged -ti $DOCKER_CONTAINER_ID
-#docker exec --privileged -ti $DOCKER_CONTAINER_ID
-#docker exec --privileged -ti $DOCKER_CONTAINER_ID
-
-#docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get -y install dpkg-dev debhelper devscripts equivs pkg-config apt-utils fakeroot
-#docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get -y install libevdev2 libevdev-dev libinput-dev dh-exec autotools-dev autoconf
-#docker exec --privileged -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-#    "update-alternatives --set fakeroot /usr/bin/fakeroot-tcp; cd ci-source; dpkg-buildpackage -b -uc -us -j4; mkdir dist; mv ../*.deb dist; chmod -R a+rw dist"
+docker exec --privileged -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
+  "cd swig-4.0.2/; sh autogen.sh; ./configure; make; sudo make install"
 
 #find dist -name \*.\*$EXT
 
