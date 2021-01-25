@@ -136,7 +136,7 @@ commands:
             curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
             tar -xzvf v4.0.2.tar.gz
             cd swig-4.0.2/
-            sh autogen.sh
+            sh autogen.sh --host
             ./configure
             make
             sudo make install
