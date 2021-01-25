@@ -12,6 +12,10 @@ executors:
     working_directory: ~/project
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
+  armv8-linux-executor:
+    machine:
+      enabled: true
+      image: ubuntu-1604:202010-01
   mac_os_executor:
     macos:
       xcode: "11.4.0"
@@ -99,6 +103,14 @@ commands:
           paths:
             - blst.dll
 
+  prepare_armv8:
+    description: "Prepare armv8"
+    steps:
+      - run:
+          name: Generate windows shared lib
+          command: |
+            .circleci/build-armv8.sh
+
 jobs:
   x86-64-linux-build:
     executor: linux_executor
@@ -108,7 +120,7 @@ jobs:
       - checkout_code
       - prepare_linux
   arm64-linux-build:
-    executor: linux_executor
+    executor: armv8-linux-executor
     environment:
       - DOCKER_IMAGE=arm64v8/debian:buster
       - CONTAINER_DISTRO=debian:buster
@@ -117,8 +129,7 @@ jobs:
       - EMU=on
       - SKIP_GRADLE: true
     steps:
-      - checkout_code
-      - prepare_linux
+      - prepare_armv8
   mac-os-build:
     executor: mac_os_executor
     environment:
@@ -153,7 +164,7 @@ workflows:
   version: 2
   default:
     jobs:
-      - x86-64-linux-build
+#      - x86-64-linux-build
 #      - mac-os-build
 #      - windows-build
       - arm64-linux-build
