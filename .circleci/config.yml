@@ -129,7 +129,7 @@ commands:
           command: |
             echo "Installing swig dependencies"
             sudo apt-get update
-            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex gcc-9-aarch64-linux-gnu
+            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex aarch64-linux-gnu-gcc
             export CC=aarch64-linux-gnu-gcc
 
             echo "Installing swig"
