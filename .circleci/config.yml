@@ -12,7 +12,7 @@ executors:
     working_directory: ~/project
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
-  armv8-linux-executor:
+  armv8_linux_executor:
     machine:
       enabled: true
       image: ubuntu-1604:202010-01
@@ -60,9 +60,9 @@ commands:
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
-          root: ./src/main/resources/x86_64/
+          root: ./src/main/resources/
           paths:
-            - libblst.so
+            - x86_64/libblst.so
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -116,6 +116,10 @@ commands:
             cd ..
             chmod a+x .circleci/*.sh
             .circleci/build-armv8.sh $BLST_MODULE_HEAD
+      - persist_to_workspace:
+          root: ./src/main/resources/
+          paths:
+            - aarch64/libblst.so
 
 jobs:
   x86-64-linux-build:
@@ -126,7 +130,7 @@ jobs:
       - checkout_code
       - prepare_linux
   arm64-linux-build:
-    executor: armv8-linux-executor
+    executor: armv8_linux_executor
     environment:
       - DOCKER_IMAGE=arm64v8/debian:buster
       - CONTAINER_DISTRO=debian:buster
@@ -162,7 +166,8 @@ jobs:
           command: |
             echo "Copying attached native libraries to resources"
             cp libblst.dylib ./src/main/resources/x86_64/
-            cp libblst.so ./src/main/resources/x86_64/
+            cp aarch64/libblst.so ./src/main/resources/aarch64/
+            cp x86_64/libblst.so ./src/main/resources/x86_64/
             cp blst.dll ./src/main/resources/x86_64/
             ./gradlew --no-daemon --parallel build
             ./gradlew --no-daemon --parallel bintrayUpload
@@ -171,15 +176,16 @@ workflows:
   version: 2
   default:
     jobs:
-#      - x86-64-linux-build
-#      - mac-os-build
-#      - windows-build
+      - x86-64-linux-build
       - arm64-linux-build
-      # - assemble-and-publish:
-      #     requires:
-      #       - linux-build
-      #       - mac-os-build
-      #       - windows-build
+      - mac-os-build
+      - windows-build
+      - assemble-and-publish:
+          requires:
+            - x86-64-linux-build
+            - arm64-linux-build
+            - mac-os-build
+            - windows-build
 #          filters:
 #            branches:
 #              only:
