@@ -107,7 +107,7 @@ commands:
     description: "Prepare armv8"
     steps:
       - run:
-          name: Generate windows shared lib
+          name: Prepare armv8 build
           command: |
             .circleci/build-armv8.sh
 
@@ -129,6 +129,7 @@ jobs:
       - EMU=on
       - SKIP_GRADLE: true
     steps:
+      - checkout_code
       - prepare_armv8
   mac-os-build:
     executor: mac_os_executor
