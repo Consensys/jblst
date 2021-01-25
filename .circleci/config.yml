@@ -110,6 +110,8 @@ commands:
           name: Prepare armv8 build
           command: |
             cd blst
+            sudo apt-get update
+            sudo apt-get install -y git
             export BLST_MODULE_HEAD=$(git rev-parse head)
             cd ..
             chmod a+x .circleci/*.sh
