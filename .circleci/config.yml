@@ -205,7 +205,7 @@ jobs:
             cp x86_64/libblst.so ./src/main/resources/x86_64/
             cp blst.dll ./src/main/resources/x86_64/
             ./gradlew --no-daemon --parallel build
-            ./gradlew --no-daemon --parallel bintray
+            ./gradlew --no-daemon --parallel bintrayUpload
 
 workflows:
   version: 2
