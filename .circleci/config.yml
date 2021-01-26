@@ -211,17 +211,17 @@ workflows:
   version: 2
   default:
     jobs:
-#      - x86-64-linux-build
+      - x86-64-linux-build
 #      - arm64-linux-build_1
       - arm64-linux-build_2
-#      - mac-os-build
-#      - windows-build
-#      - assemble-and-publish:
-#          requires:
-#            - x86-64-linux-build
-#            - arm64-linux-build_2
-#            - mac-os-build
-#            - windows-build
+      - mac-os-build
+      - windows-build
+      - assemble-and-publish:
+          requires:
+            - x86-64-linux-build
+            - arm64-linux-build_2
+            - mac-os-build
+            - windows-build
 #          filters:
 #            branches:
 #              only:
