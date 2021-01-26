@@ -72,26 +72,6 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'tech.pegasys'
-            artifactId = 'jblst'
-            version = project.version
-            pom {
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-            }
-
-            from components.java
-        }
-    }
-}
-
 bintray {
     user = System.getenv("BINTRAY_USER")
     key = System.getenv("BINTRAY_API_KEY")
@@ -104,7 +84,7 @@ bintray {
         repo = 'pegasys-repo'
         name = 'jblst'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Nashatyrev/jblst'
+        vcsUrl = 'https://github.com/ConsenSys/jblst'
     }
 }
 
