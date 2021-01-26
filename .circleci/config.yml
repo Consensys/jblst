@@ -102,7 +102,11 @@ commands:
           root: ./src/main/resources/x86_64/
           paths:
             - blst.dll
-#
+      - persist_to_workspace:
+          root: .
+          paths:
+            - src/main/java/tech/pegasys/teku/bls/impl/blst/
+
 #  prepare_armv8_1:
 #    description: "Prepare armv8 - 1"
 #    steps:
@@ -150,6 +154,7 @@ commands:
           root: ./src/main/resources/
           paths:
             - aarch64/libblst.so
+
 
 jobs:
   x86-64-linux-build:
