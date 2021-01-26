@@ -142,7 +142,7 @@ commands:
 
             cd ~/project
             export CC=arm-linux-gnueabihf-gcc make
-            export CPP=g++-arm-linux-gnueabihf
+            export CPP=arm-linux-gnueabihf-g++ make
             sh blst/bindings/java/run.me
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
             ./gradlew --no-daemon test
