@@ -60,7 +60,7 @@ commands:
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
 
             mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
-            cp blst/bindings/java/*.java src/main/resources/swig
+            cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
             sed -s -i '1 i package tech.pegasys.teku.bls.impl.blst.swig;' src/main/java/tech/pegasys/teku/bls/impl/blst/swig/*.java
             ./gradlew --no-daemon test
       - persist_to_workspace:
