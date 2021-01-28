@@ -57,8 +57,7 @@ commands:
 
             cd ~/jblst
             sh blst/bindings/java/run.me
-            mv blst/bindings/java/libblst.so blst/bindings/java/blst.so
-            cp blst/bindings/java/blst.so src/main/resources/x86_64/
+            cp blst/bindings/java/libblst.so src/main/resources/x86_64/
 
             mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
             cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
@@ -67,7 +66,7 @@ commands:
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
-            - x86_64/blst.so
+            - x86_64/libblst.so
       - persist_to_workspace:
           root: .
           paths:
@@ -87,13 +86,12 @@ commands:
             brew install swig@4.0
 
             sh blst/bindings/java/run.me
-            mv blst/bindings/java/libblst.dylib blst/bindings/java/blst.dylib
-            cp blst/bindings/java/blst.dylib src/main/resources/x86_64/
+            cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
-            - blst.dylib
+            - libblst.dylib
 
   prepare_windows:
     description: "Generate windows shared lib"
@@ -156,12 +154,11 @@ commands:
             export CPP=arm-linux-gnueabihf-g++ make
             set
             sh blst/bindings/java/run.me || true
-            mv blst/bindings/java/libblst.so blst/bindings/java/blst.so
-            cp blst/bindings/java/blst.so src/main/resources/aarch64/
+            cp blst/bindings/java/libblst.so src/main/resources/aarch64/
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
-            - aarch64/blst.so
+            - aarch64/libblst.so
 
 
 jobs:
@@ -213,9 +210,9 @@ jobs:
           name: Create build
           command: |
             echo "Copying attached native libraries to resources"
-            cp blst.dylib ./src/main/resources/x86_64/
-            cp aarch64/blst.so ./src/main/resources/aarch64/
-            cp x86_64/blst.so ./src/main/resources/x86_64/
+            cp libblst.dylib ./src/main/resources/x86_64/
+            cp aarch64/libblst.so ./src/main/resources/aarch64/
+            cp x86_64/libblst.so ./src/main/resources/x86_64/
             cp blst.dll ./src/main/resources/x86_64/
             ./gradlew --no-daemon --parallel build
             ./gradlew --no-daemon --parallel bintrayUpload
