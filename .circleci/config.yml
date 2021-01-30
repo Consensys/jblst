@@ -111,7 +111,7 @@ commands:
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
-            sh blst/bindings/java/run.me  || true
+            sh blst/bindings/java/run.me || true
             cp blst/bindings/java/blst.dll src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
