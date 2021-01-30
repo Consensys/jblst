@@ -109,7 +109,7 @@ commands:
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
-            sh blst/bindings/java/run.me || true
+            sh blst/bindings/java/run.me
             cp blst/bindings/java/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
