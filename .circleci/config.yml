@@ -81,7 +81,7 @@ commands:
 
             echo "Installing swig"
             brew install swig@4.0
-            brew install gsed
+            brew install gnu-sed
 
             sh blst/bindings/java/run.me
             cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
