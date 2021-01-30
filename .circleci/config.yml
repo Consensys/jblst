@@ -58,10 +58,6 @@ commands:
             cd ~/jblst
             sh blst/bindings/java/run.me || true
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
-
-            mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
-            cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
-            sed -s -i '1 i package tech.pegasys.teku.bls.impl.blst.swig;' src/main/java/tech/pegasys/teku/bls/impl/blst/swig/*.java
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
@@ -88,7 +84,6 @@ commands:
             mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
             rm blst/bindings/java/runnable.java
             cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
-            gsed -s -i '1 i package tech.pegasys.teku.bls.impl.blst.swig;' src/main/java/tech/pegasys/teku/bls/impl/blst/swig/*.java
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
