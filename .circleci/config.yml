@@ -56,7 +56,7 @@ commands:
             sudo make install
 
             cd ~/jblst
-            sh blst/bindings/java/run.me
+            sh blst/bindings/java/run.me || true
             cp blst/bindings/java/libblst.so src/main/resources/x86_64/
 
             mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
@@ -83,7 +83,7 @@ commands:
             brew install swig@4.0
             brew install gnu-sed
 
-            sh blst/bindings/java/run.me
+            sh blst/bindings/java/run.me || true
             cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
 
             mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
@@ -111,7 +111,7 @@ commands:
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
-            sh blst/bindings/java/run.me
+            sh blst/bindings/java/run.me  || true
             cp blst/bindings/java/blst.dll src/main/resources/x86_64/
             ./gradlew --no-daemon test
       - persist_to_workspace:
