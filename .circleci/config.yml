@@ -67,10 +67,7 @@ commands:
           root: ./src/main/resources/
           paths:
             - x86_64/libblst.so
-      - persist_to_workspace:
-          root: .
-          paths:
-            - src/main/java/tech/pegasys/teku/bls/impl/blst/
+
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -84,14 +81,24 @@ commands:
 
             echo "Installing swig"
             brew install swig@4.0
+            brew install gsed
 
             sh blst/bindings/java/run.me
             cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
+
+            mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
+            cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
+            gsed -s -i '1 i package tech.pegasys.teku.bls.impl.blst.swig;' src/main/java/tech/pegasys/teku/bls/impl/blst/swig/*.java
+
             ./gradlew --no-daemon test
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
             - libblst.dylib
+      - persist_to_workspace:
+          root: .
+          paths:
+            - src/main/java/tech/pegasys/teku/bls/impl/blst/
 
   prepare_windows:
     description: "Generate windows shared lib"
