@@ -104,6 +104,7 @@ commands:
       - run:
           name: Generate windows shared lib
           command: |
+            $ErrorActionPreference = 'SilentlyContinue'
             choco install mingw --force --x64
             choco install swig
             $Env:MSYSTEM = "MINGW"
