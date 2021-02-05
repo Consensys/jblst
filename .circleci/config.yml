@@ -178,7 +178,7 @@ jobs:
       - SKIP_GRADLE: true
     steps:
       - checkout_code
-      - prepare_armv8
+      - prepare_armv8_1
 #  arm64-linux-build_2:
 #    executor: linux_executor
 #    steps:
