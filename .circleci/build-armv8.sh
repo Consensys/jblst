@@ -30,8 +30,9 @@ docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get update
 docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get install -y autoconf libpcre3 libpcre3-dev bison flex curl tar openjdk-11-jdk git build-essential
 docker exec --privileged -ti $DOCKER_CONTAINER_ID curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
 docker exec --privileged -ti $DOCKER_CONTAINER_ID tar -xzvf v4.0.2.tar.gz
+docker cp blst $DOCKER_CONTAINER_ID:/
 docker exec --privileged -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-  "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; make install; cd ..; git clone https://github.com/cemozerr/blst; cd blst; export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64; sh bindings/java/run.me || true;"
+  "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; make install; cd ../blst; export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64; sh bindings/java/run.me || true;"
 docker cp $DOCKER_CONTAINER_ID:/blst/bindings/java/libblst.so src/main/resources/aarch64/
 
 #find dist -name \*.\*$EXT
