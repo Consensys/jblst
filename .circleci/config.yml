@@ -12,10 +12,10 @@ executors:
     working_directory: ~/jblst
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
-#  armv8_linux_executor:
-#    machine:
-#      enabled: true
-#      image: ubuntu-1604:202010-01
+  armv8_linux_executor:
+    machine:
+      enabled: true
+      image: ubuntu-1604:202010-01
   mac_os_executor:
     macos:
       xcode: "11.4.0"
@@ -62,7 +62,6 @@ commands:
           root: ./src/main/resources/
           paths:
             - x86_64/libblst.so
-
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -111,54 +110,53 @@ commands:
           paths:
             - blst.dll
 
-
-#  prepare_armv8_1:
-#    description: "Prepare armv8 - 1"
-#    steps:
-#      - run:
-#          name: Prepare armv8 build
-#          command: |
-#            cd blst
-#            sudo apt-get update
-#            sudo apt-get install -y git
-#            export BLST_MODULE_HEAD=$(git rev-parse head)
-#            cd ..
-#            chmod a+x .circleci/*.sh
-#            .circleci/build-armv8.sh $BLST_MODULE_HEAD
-#      - persist_to_workspace:
-#          root: ./src/main/resources/
-#          paths:
-#            - aarch64/libblst.so
-
-  prepare_armv8_2:
-    description: "Prepare armv8 - 2"
+  prepare_armv8_1:
+    description: "Prepare armv8 - 1"
     steps:
       - run:
           name: Prepare armv8 build
           command: |
-            echo "Installing swig dependencies"
+            cd blst
             sudo apt-get update
-            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
-
-            echo "Installing swig"
-            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
-            tar -xzvf v4.0.2.tar.gz
-            cd swig-4.0.2/
-            sh autogen.sh
-            ./configure
-            make
-            sudo make install
-
-            cd ~/jblst
-            export CC=arm-linux-gnueabihf-gcc make
-            export CPP=arm-linux-gnueabihf-g++ make
-            set
-            sh blst/bindings/java/run.me || true
-            cp blst/bindings/java/libblst.so src/main/resources/aarch64/
+            sudo apt-get install -y git
+            export BLST_MODULE_HEAD=$(git rev-parse head)
+            cd ..
+            chmod a+x .circleci/*.sh
+            .circleci/build-armv8.sh $BLST_MODULE_HEAD
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
             - aarch64/libblst.so
+
+#  prepare_armv8_2:
+#    description: "Prepare armv8 - 2"
+#    steps:
+#      - run:
+#          name: Prepare armv8 build
+#          command: |
+#            echo "Installing swig dependencies"
+#            sudo apt-get update
+#            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+#
+#            echo "Installing swig"
+#            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
+#            tar -xzvf v4.0.2.tar.gz
+#            cd swig-4.0.2/
+#            sh autogen.sh
+#            ./configure
+#            make
+#            sudo make install
+#
+#            cd ~/jblst
+#            export CC=arm-linux-gnueabihf-gcc make
+#            export CPP=arm-linux-gnueabihf-g++ make
+#            set
+#            sh blst/bindings/java/run.me || true
+#            cp blst/bindings/java/libblst.so src/main/resources/aarch64/
+#      - persist_to_workspace:
+#          root: ./src/main/resources/
+#          paths:
+#            - aarch64/libblst.so
 
 
 jobs:
@@ -169,23 +167,23 @@ jobs:
     steps:
       - checkout_code
       - prepare_linux
-#  arm64-linux-build_1:
-#    executor: armv8_linux_executor
-#    environment:
-#      - DOCKER_IMAGE=arm64v8/debian:buster
-#      - CONTAINER_DISTRO=debian:buster
-#      - PKG_RELEASE=buster
-#      - PKG_DISTRO=debian
-#      - EMU=on
-#      - SKIP_GRADLE: true
-#    steps:
-#      - checkout_code
-#      - prepare_armv8
-  arm64-linux-build_2:
-    executor: linux_executor
+  arm64-linux-build_1:
+    executor: armv8_linux_executor
+    environment:
+      - DOCKER_IMAGE=arm64v8/debian:buster
+      - CONTAINER_DISTRO=debian:buster
+      - PKG_RELEASE=buster
+      - PKG_DISTRO=debian
+      - EMU=on
+      - SKIP_GRADLE: true
     steps:
       - checkout_code
-      - prepare_armv8_2
+      - prepare_armv8
+#  arm64-linux-build_2:
+#    executor: linux_executor
+#    steps:
+#      - checkout_code
+#      - prepare_armv8_2
   mac-os-build:
     executor: mac_os_executor
     environment:
@@ -222,14 +220,15 @@ workflows:
   default:
     jobs:
       - x86-64-linux-build
-#      - arm64-linux-build_1
-      - arm64-linux-build_2
+      - arm64-linux-build_1
+#      - arm64-linux-build_2
       - mac-os-build
       - windows-build
       - assemble-and-publish:
           requires:
             - x86-64-linux-build
-            - arm64-linux-build_2
+            - arm64-linux-build_1
+#            - arm64-linux-build_2
             - mac-os-build
             - windows-build
 #          filters:
