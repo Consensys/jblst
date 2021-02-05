@@ -31,7 +31,7 @@ docker exec --privileged -ti $DOCKER_CONTAINER_ID apt-get install -y autoconf li
 docker exec --privileged -ti $DOCKER_CONTAINER_ID curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
 docker exec --privileged -ti $DOCKER_CONTAINER_ID tar -xzvf v4.0.2.tar.gz
 docker exec --privileged -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-  "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; make install; cd ..; git clone -n https://github.com/supranational/blst; cd blst; git checkout $1; export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64; sh bindings/java/run.me;"
+  "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; make install; cd ..; git clone https://github.com/cemozerr/blst; cd blst; export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64; sh bindings/java/run.me;"
 docker cp $DOCKER_CONTAINER_ID:/blst/bindings/java/libblst.so src/main/resources/aarch64/
 
 #find dist -name \*.\*$EXT

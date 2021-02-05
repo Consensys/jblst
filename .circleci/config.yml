@@ -119,10 +119,9 @@ commands:
             cd blst
             sudo apt-get update
             sudo apt-get install -y git
-            export BLST_MODULE_HEAD=$(git rev-parse head)
             cd ..
             chmod a+x .circleci/*.sh
-            .circleci/build-armv8.sh $BLST_MODULE_HEAD
+            .circleci/build-armv8.sh
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
