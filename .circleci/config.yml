@@ -79,6 +79,7 @@ commands:
             brew install gnu-sed
 
             export JAVA_PACKAGE=tech.pegasys.teku.bls.impl.blst.swig
+            export CFLAGS="-O -fPIC -Wall -Wextra -Wno-error"
             sh blst/bindings/java/run.me || true
             cp blst/tech/pegasys/teku/bls/impl/blst/swig/libblst.dylib src/main/resources/x86_64/
 
