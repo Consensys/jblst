@@ -32,8 +32,8 @@ docker exec --privileged -ti $DOCKER_CONTAINER_ID curl -L -O https://github.com/
 docker exec --privileged -ti $DOCKER_CONTAINER_ID tar -xzvf v4.0.2.tar.gz
 docker cp blst $DOCKER_CONTAINER_ID:/
 docker exec --privileged -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
-  "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; make install; cd ../blst; export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64; export BLST_PACKAGE_NAME=tech.pegasys.teku.bls.impl.blst.swig; sh bindings/java/run.me || true;"
-docker cp $DOCKER_CONTAINER_ID:/blst/bindings/java/libblst.so src/main/resources/aarch64/
+  "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; make install; cd ../blst; export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64; export JAVA_PACKAGE=tech.pegasys.teku.bls.impl.blst.swig; sh bindings/java/run.me || true;"
+docker cp $DOCKER_CONTAINER_ID:/blst/tech/pegasys/teku/bls/impl/blst/swig/libblst.so src/main/resources/aarch64/
 
 #find dist -name \*.\*$EXT
 

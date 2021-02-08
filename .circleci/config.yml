@@ -56,9 +56,9 @@ commands:
             sudo make install
 
             cd ~/jblst
-            export BLST_PACKAGE_NAME=tech.pegasys.teku.bls.impl.blst.swig
+            export JAVA_PACKAGE=tech.pegasys.teku.bls.impl.blst.swig
             sh blst/bindings/java/run.me || true
-            cp blst/bindings/java/libblst.so src/main/resources/x86_64/
+            cp blst/tech/pegasys/teku/bls/impl/blst/swig/libblst.so src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
@@ -78,13 +78,13 @@ commands:
             brew install swig@4.0
             brew install gnu-sed
 
-            export BLST_PACKAGE_NAME=tech.pegasys.teku.bls.impl.blst.swig
+            export JAVA_PACKAGE=tech.pegasys.teku.bls.impl.blst.swig
             sh blst/bindings/java/run.me || true
-            cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
+            cp blst/tech/pegasys/teku/bls/impl/blst/swig/libblst.dylib src/main/resources/x86_64/
 
             mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
             rm blst/bindings/java/runnable.java
-            cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
+            cp blst/tech/pegasys/teku/bls/impl/blst/swig/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
@@ -105,9 +105,9 @@ commands:
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
-            $Env:BLST_PACKAGE_NAME = "tech.pegasys.teku.bls.impl.blst.swig"
+            $Env:JAVA_PACKAGE = "tech.pegasys.teku.bls.impl.blst.swig"
             sh blst/bindings/java/run.me
-            cp blst/bindings/java/blst.dll src/main/resources/x86_64/
+            cp blst/tech/pegasys/teku/bls/impl/blst/swig/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
