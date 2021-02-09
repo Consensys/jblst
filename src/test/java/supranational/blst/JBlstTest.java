@@ -1,4 +1,4 @@
-package tech.pegasys.teku.bls.impl.blst;
+package supranational.blst;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
