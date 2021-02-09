@@ -33,7 +33,7 @@ docker exec --privileged -ti $DOCKER_CONTAINER_ID tar -xzvf v4.0.2.tar.gz
 docker cp blst $DOCKER_CONTAINER_ID:/
 docker exec --privileged -ti $DOCKER_CONTAINER_ID /bin/bash -xec \
   "cd swig-4.0.2/; sh autogen.sh; ./configure --disable-dependency-tracking; make; make install; cd ../blst; export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64; sh bindings/java/build.sh;"
-docker cp $DOCKER_CONTAINER_ID:/blst/supranational/blst/libblst.so src/main/resources/aarch64/
+docker cp $DOCKER_CONTAINER_ID:/supranational/blst/libblst.so src/main/resources/aarch64/
 
 #find dist -name \*.\*$EXT
 

@@ -57,7 +57,7 @@ commands:
 
             cd ~/jblst
             sh blst/bindings/java/build.sh
-            cp blst/supranational/blst/libblst.so src/main/resources/x86_64/
+            cp supranational/blst/libblst.so src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
@@ -83,7 +83,7 @@ commands:
 
             mkdir src/main/java/supranational/blst
             rm blst/bindings/java/runnable.java
-            cp blst/supranational/blst/*.java src/main/java/supranational/blst
+            cp supranational/blst/*.java src/main/java/supranational/blst
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
@@ -91,7 +91,7 @@ commands:
       - persist_to_workspace:
           root: .
           paths:
-            - src/main/java/tech/pegasys/teku/bls/impl/blst/
+            - src/main/java/supranational/blst/
 
   prepare_windows:
     description: "Generate windows shared lib"
@@ -104,7 +104,7 @@ commands:
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
             sh blst/bindings/java/build.sh
-            cp blst/supranational/blst/blst.dll src/main/resources/x86_64/
+            cp supranational/blst/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
