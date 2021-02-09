@@ -56,7 +56,7 @@ commands:
             sudo make install
 
             cd ~/jblst
-            sh blst/bindings/java/run.me
+            sh blst/bindings/java/build.sh
             cp blst/supranational/blst/libblst.so src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/
@@ -78,7 +78,7 @@ commands:
             brew install gnu-sed
 
             export CFLAGS="-O -fPIC -Wall -Wextra -Wno-error"
-            sh blst/bindings/java/run.me
+            sh blst/bindings/java/build.sh
             cp blst/supranational/blst/libblst.dylib src/main/resources/x86_64/
 
             mkdir src/main/java/supranational/blst
@@ -103,7 +103,7 @@ commands:
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
-            sh blst/bindings/java/run.me
+            sh blst/bindings/java/build.sh
             cp blst/supranational/blst/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
