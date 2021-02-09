@@ -79,10 +79,9 @@ commands:
 
             export CFLAGS="-O -fPIC -Wall -Wextra -Wno-error"
             sh blst/bindings/java/build.sh
-            cp blst/supranational/blst/libblst.dylib src/main/resources/x86_64/
+            cp supranational/blst/libblst.dylib src/main/resources/x86_64/
 
             mkdir src/main/java/supranational/blst
-            rm blst/bindings/java/runnable.java
             cp supranational/blst/*.java src/main/java/supranational/blst
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
