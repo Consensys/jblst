@@ -11,7 +11,7 @@ public class JBlst {
   );
 
   public static void loadNativeLibrary() throws UnsupportedOperationException {
-    String libLocation = "/" + getArch() + "/" + System.mapLibraryName("jblst");
+    String libLocation = "/" + getArch() + "/" + System.mapLibraryName("blst");
     try {
       NativeUtils.loadLibraryFromJar(libLocation);
     } catch (Throwable e) {
