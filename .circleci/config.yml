@@ -56,8 +56,8 @@ commands:
             sudo make install
 
             cd ~/jblst
-            sh blst/bindings/java/build.sh
-            cp supranational/blst/libblst.so src/main/resources/x86_64/
+            sh blst/bindings/java/run.me || true
+            cp blst/bindings/java/libblst.so src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/
           paths:
@@ -77,12 +77,12 @@ commands:
             brew install swig@4.0
             brew install gnu-sed
 
-            export CFLAGS="-O -fPIC -Wall -Wextra -Wno-error"
-            sh blst/bindings/java/build.sh
-            cp supranational/blst/libblst.dylib src/main/resources/x86_64/
+            sh blst/bindings/java/run.me || true
+            cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
 
-            mkdir src/main/java/supranational/blst
-            cp supranational/blst/*.java src/main/java/supranational/blst
+            mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
+            rm blst/bindings/java/runnable.java
+            cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
@@ -90,7 +90,7 @@ commands:
       - persist_to_workspace:
           root: .
           paths:
-            - src/main/java/supranational/blst/
+            - src/main/java/tech/pegasys/teku/bls/impl/blst/
 
   prepare_windows:
     description: "Generate windows shared lib"
@@ -98,12 +98,13 @@ commands:
       - run:
           name: Generate windows shared lib
           command: |
+            $ErrorActionPreference = 'SilentlyContinue'
             choco install mingw --force --x64
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
-            sh blst/bindings/java/build.sh
-            cp supranational/blst/blst.dll src/main/resources/x86_64/
+            sh blst/bindings/java/run.me
+            cp blst/bindings/java/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./src/main/resources/x86_64/
           paths:
@@ -191,8 +192,8 @@ workflows:
             - arm64-linux-build
             - mac-os-build
             - windows-build
-#          filters:
-#            branches:
-#              only:
-#                - master
-#                - /^release-.*/
+          filters:
+            branches:
+              only:
+                - master
+                - /^release-.*/

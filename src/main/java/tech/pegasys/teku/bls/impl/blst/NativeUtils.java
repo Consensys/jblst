@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package supranational.blst;
+package tech.pegasys.teku.bls.impl.blst;
 
 import java.io.File;
 import java.io.FileNotFoundException;

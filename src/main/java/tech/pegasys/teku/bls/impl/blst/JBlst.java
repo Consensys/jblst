@@ -1,4 +1,4 @@
-package supranational.blst;
+package tech.pegasys.teku.bls.impl.blst;
 
 import java.util.Map;
 
