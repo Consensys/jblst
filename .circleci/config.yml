@@ -195,11 +195,11 @@ workflows:
             - arm64-linux-build
             - mac-os-build
             - windows-build
-          filters:
-            branches:
-              only:
-                - master
-                - /^release-.*/
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - /^release-.*/
           context:
             - quorum-gradle
             - dockerhub-quorumengineering-ro
