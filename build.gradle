@@ -65,8 +65,8 @@ publishing {
       name = "cloudsmith"
       url = "https://api-g.cloudsmith.io/maven/consensys/maven/"
       credentials {
-        username = cloudsmithUser
-        password = cloudsmithKey
+        username = project.hasProperty('cloudsmithUser') ? project.property('cloudsmithUser') : System.getenv('CLOUDSMITH_USER')
+        password = project.hasProperty('cloudsmithApiKey') ? project.property('cloudsmithApiKey') : System.getenv('CLOUDSMITH_API_KEY')
       }
     }
   }
