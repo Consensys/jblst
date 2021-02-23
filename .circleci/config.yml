@@ -183,15 +183,15 @@ workflows:
   default:
     jobs:
       - x86-64-linux-build
-#      - arm64-linux-build
-#      - mac-os-build
-#      - windows-build
+      - arm64-linux-build
+      - mac-os-build
+      - windows-build
       - assemble-and-publish:
           requires:
             - x86-64-linux-build
-#            - arm64-linux-build
-#            - mac-os-build
-#            - windows-build
+            - arm64-linux-build
+            - mac-os-build
+            - windows-build
 #          filters:
 #            branches:
 #              only:
