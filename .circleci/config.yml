@@ -197,3 +197,4 @@ workflows:
               only:
                 - master
                 - /^release-.*/
+                - cloudsmith
