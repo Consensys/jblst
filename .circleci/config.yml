@@ -174,10 +174,7 @@ jobs:
           name: Create build
           command: |
             echo "Copying attached native libraries to resources"
-#            cp libblst.dylib ./src/main/resources/x86_64/
-#            cp aarch64/libblst.so ./src/main/resources/aarch64/
             cp x86_64/libblst.so ./src/main/resources/x86_64/
-#            cp blst.dll ./src/main/resources/x86_64/
             ./gradlew --no-daemon --parallel build
             ./gradlew --no-daemon --parallel publish
 
