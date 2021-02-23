@@ -174,10 +174,10 @@ jobs:
           name: Create build
           command: |
             echo "Copying attached native libraries to resources"
-            cp libblst.dylib ./src/main/resources/x86_64/
-            cp aarch64/libblst.so ./src/main/resources/aarch64/
+#            cp libblst.dylib ./src/main/resources/x86_64/
+#            cp aarch64/libblst.so ./src/main/resources/aarch64/
             cp x86_64/libblst.so ./src/main/resources/x86_64/
-            cp blst.dll ./src/main/resources/x86_64/
+#            cp blst.dll ./src/main/resources/x86_64/
             ./gradlew --no-daemon --parallel build
             ./gradlew --no-daemon --parallel publish
 
@@ -185,15 +185,15 @@ workflows:
   version: 2
   default:
     jobs:
-#      - x86-64-linux-build
+      - x86-64-linux-build
 #      - arm64-linux-build
-      - mac-os-build
-      - windows-build
+#      - mac-os-build
+#      - windows-build
       - assemble-and-publish:
           requires:
-#            - x86-64-linux-build
+            - x86-64-linux-build
 #            - arm64-linux-build
-            - mac-os-build
+#            - mac-os-build
 #            - windows-build
 #          filters:
 #            branches:
