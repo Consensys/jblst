@@ -179,6 +179,8 @@ jobs:
             cp x86_64/libblst.so ./src/main/resources/x86_64/
             cp blst.dll ./src/main/resources/x86_64/
             ./gradlew --no-daemon --parallel build
+      - persist_to_workspace:
+          root: .
   publish:
     executor: linux_executor
     steps:
