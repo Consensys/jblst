@@ -112,7 +112,7 @@ commands:
             $Env:CC = "gcc"
 
             cd blst
-            build.bat -D__BLST_PORTABLE__
+            .\build.bat -D__BLST_PORTABLE__
             sh .\bindings\java\run.me
 #            sh blst/bindings/java/run.me
 #            cp blst/bindings/java/blst.dll src/main/resources/x86_64/
