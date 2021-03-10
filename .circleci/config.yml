@@ -187,9 +187,9 @@ jobs:
             RESOURCEDIR="../../../src/main/resources/"
             mkdir -p $SRCDIR $RESOURCEDIR
             cp supranational/blst/*.java $SRCDIR
-            cp supranational/blst/Linux $RESOURCEDIR
-            cp supranational/blst/Mac $RESOURCEDIR
-            cp supranational/blst/Windows $RESOURCEDIR
+            cp -r supranational/blst/Linux $RESOURCEDIR
+            cp -r supranational/blst/Mac $RESOURCEDIR
+            cp -r supranational/blst/Windows $RESOURCEDIR
             ./gradlew --no-daemon --parallel build
       - persist_to_workspace:
           root: .
