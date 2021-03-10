@@ -177,7 +177,7 @@ jobs:
     steps:
       - checkout_code
       - attach_workspace:
-          at: ~/jbslt
+          at: ~/jblst
       - run:
           name: Create build
           command: |
