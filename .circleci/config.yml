@@ -68,7 +68,7 @@ commands:
       - persist_to_workspace:
           root: ./
           paths:
-            - ./blst/bindings/java/supranational/blst/Linux
+            - ./blst/bindings/java/supranational/
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -119,7 +119,7 @@ commands:
       - persist_to_workspace:
           root: ./
           paths:
-            - ./blst/bindings/java/supranational
+            - ./blst/bindings/java/supranational/blst/Windows
 
   prepare_armv8:
     description: "Prepare armv8"
@@ -184,7 +184,7 @@ jobs:
             ls -R blst/bindings/java/supranational
 
             cd blst/bindings/java/
-            jar tvf ../../../blst-test.jar supranational
+            jar cvf ../../../blst-test.jar supranational
 #            echo "Copying attached native libraries to resources"
 #            cp libblst.dylib ./src/main/resources/x86_64/
 #            cp aarch64/libblst.so ./src/main/resources/aarch64/
