@@ -21,7 +21,7 @@ executors:
       image: ubuntu-1604:202010-01
   mac_os_executor:
     macos:
-      xcode: "11.4.0"
+      xcode: "12.4.0"
     resource_class: medium
     working_directory: ~/jblst
     environment:
