@@ -181,25 +181,24 @@ jobs:
       - run:
           name: Create build
           command: |
-            ls -R blst/bindings/java/supranational
 
             cd blst/bindings/java/
-            jar cvf ../../../blst-test.jar supranational
-#            echo "Copying attached native libraries to resources"
-#            cp libblst.dylib ./src/main/resources/x86_64/
-#            cp aarch64/libblst.so ./src/main/resources/aarch64/
-#            cp x86_64/libblst.so ./src/main/resources/x86_64/
-#            cp blst.dll ./src/main/resources/x86_64/
-#            ./gradlew --no-daemon --parallel build
+            SRCDIR="../../../src/main/java/supranational/blst"
+            RESOURCEDIR="../../../src/main/resources/"
+            mkdir -p $SRCDIR $RESOURCEDIR
+            cp supranational/blst/*.java $SRCDIR
+            cp supranational/blst/Linux $RESOURCEDIR
+            cp supranational/blst/Mac $RESOURCEDIR
+            cp supranational/blst/Windows $RESOURCEDIR
+            ./gradlew --no-daemon --parallel build
       - persist_to_workspace:
           root: .
           paths:
             - ./
 
       - store_artifacts:
-          name: BLST jar
-          path:  blst-test.jar
-          destination: distributions
+          name: Store Jar
+          path: build/libs
   publish:
     executor: linux_executor
     steps:
