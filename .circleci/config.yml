@@ -238,12 +238,12 @@ workflows:
               only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
           context:
             - dockerhub-quorumengineering-ro
-#      - arm64-linux-build:
-#          filters:
-#            tags:
-#              <<: *filters-release-tags
-#          context:
-#            - dockerhub-quorumengineering-ro
+      - arm64-linux-build:
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - dockerhub-quorumengineering-ro
       - mac-os-build:
           filters:
             tags:
@@ -259,7 +259,7 @@ workflows:
       - assemble:
           requires:
             - x86-64-linux-build
-#            - arm64-linux-build
+            - arm64-linux-build
             - mac-os-build
             - windows-build
           filters:
