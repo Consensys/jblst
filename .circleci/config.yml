@@ -106,12 +106,16 @@ commands:
             choco install swig
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
-            sh blst/bindings/java/run.me
-            cp blst/bindings/java/blst.dll src/main/resources/x86_64/
+
+            cd blst
+            build.bat -D__BLST_PORTABLE__
+            sh .\bindings\java\run.me
+#            sh blst/bindings/java/run.me
+#            cp blst/bindings/java/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
-          root: ./src/main/resources/x86_64/
+          root: ./blst/bindings/java/supranational
           paths:
-            - blst.dll
+            - ./
 
   prepare_armv8:
     description: "Prepare armv8"
@@ -213,12 +217,12 @@ workflows:
               only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
           context:
             - dockerhub-quorumengineering-ro
-      - arm64-linux-build:
-          filters:
-            tags:
-              <<: *filters-release-tags
-          context:
-            - dockerhub-quorumengineering-ro
+#      - arm64-linux-build:
+#          filters:
+#            tags:
+#              <<: *filters-release-tags
+#          context:
+#            - dockerhub-quorumengineering-ro
       - mac-os-build:
           filters:
             tags:
@@ -234,7 +238,7 @@ workflows:
       - assemble:
           requires:
             - x86-64-linux-build
-            - arm64-linux-build
+#            - arm64-linux-build
             - mac-os-build
             - windows-build
           filters:
