@@ -66,9 +66,9 @@ commands:
             ./bindings/java/run.me
 
       - persist_to_workspace:
-          root: ./blst/bindings/java/supranational/blst/Linux
+          root: ./
           paths:
-            - ./
+            - ./blst/bindings/java/supranational/blst/Linux
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -91,9 +91,9 @@ commands:
             ./build.sh -D__BLST_PORTABLE__
             ./bindings/java/run.me
       - persist_to_workspace:
-          root: ./blst/bindings/java/supranational/blst/Mac
+          root: ./
           paths:
-            - ./
+            - ./blst/bindings/java/supranational/blst/Mac
 
   prepare_windows:
     description: "Generate windows shared lib"
@@ -117,9 +117,9 @@ commands:
 #            sh blst/bindings/java/run.me
 #            cp blst/bindings/java/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
-          root: ./blst/bindings/java/supranational
+          root: ./
           paths:
-            - ./
+            - ./blst/bindings/java/supranational
 
   prepare_armv8:
     description: "Prepare armv8"
