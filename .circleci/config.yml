@@ -58,13 +58,12 @@ commands:
             make
             sudo make install
 
-            cd ~/jblst
-            sh blst/bindings/java/run.me || true
-            cp blst/bindings/java/libblst.so src/main/resources/x86_64/
+            ./blst/build.sh -D__BLST_PORTABLE__
+            ./blst/bindings/java/run.me
       - persist_to_workspace:
-          root: ./src/main/resources/
+          root: ./blst/bindings/java/supranational
           paths:
-            - x86_64/libblst.so
+            - ./
 
   prepare_macos:
     description: "Generate macOS shared lib"
@@ -80,20 +79,12 @@ commands:
             brew install swig@4.0
             brew install gnu-sed
 
-            sh blst/bindings/java/run.me || true
-            cp blst/bindings/java/libblst.dylib src/main/resources/x86_64/
-
-            mkdir src/main/java/tech/pegasys/teku/bls/impl/blst/swig
-            rm blst/bindings/java/runnable.java
-            cp blst/bindings/java/*.java src/main/java/tech/pegasys/teku/bls/impl/blst/swig
+            ./blst/build.sh -D__BLST_PORTABLE__
+            ./blst/bindings/java/run.me
       - persist_to_workspace:
-          root: ./src/main/resources/x86_64/
+          root: ./blst/bindings/java/supranational
           paths:
-            - libblst.dylib
-      - persist_to_workspace:
-          root: .
-          paths:
-            - src/main/java/tech/pegasys/teku/bls/impl/blst/
+            - ./
 
   prepare_windows:
     description: "Generate windows shared lib"
@@ -169,20 +160,29 @@ jobs:
     steps:
       - checkout_code
       - attach_workspace:
-          at: .
+          at: ~/jbslt
       - run:
           name: Create build
           command: |
-            echo "Copying attached native libraries to resources"
-            cp libblst.dylib ./src/main/resources/x86_64/
-            cp aarch64/libblst.so ./src/main/resources/aarch64/
-            cp x86_64/libblst.so ./src/main/resources/x86_64/
-            cp blst.dll ./src/main/resources/x86_64/
-            ./gradlew --no-daemon --parallel build
+            ls -R blst/bindings/java/supranational
+
+            cd blst/bindings/java/
+            jar tvf ../../../blst-test.jar supranational
+#            echo "Copying attached native libraries to resources"
+#            cp libblst.dylib ./src/main/resources/x86_64/
+#            cp aarch64/libblst.so ./src/main/resources/aarch64/
+#            cp x86_64/libblst.so ./src/main/resources/x86_64/
+#            cp blst.dll ./src/main/resources/x86_64/
+#            ./gradlew --no-daemon --parallel build
       - persist_to_workspace:
           root: .
           paths:
             - ./
+
+      - store_artifacts:
+          name: BLST jar
+          path:  blst-test.jar
+          destination: distributions
   publish:
     executor: linux_executor
     steps:
