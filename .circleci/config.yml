@@ -140,7 +140,7 @@ commands:
           command: |
             cd blst
             export CC=aarch64-linux-gnu-gcc
-            export CXX=aarch64-linux-gnu-cpp
+            export CXX=aarch64-linux-gnu-g++
             ./build.sh -D__BLST_PORTABLE__
             ./bindings/java/build.sh
 
