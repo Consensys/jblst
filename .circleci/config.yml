@@ -43,7 +43,7 @@ commands:
     description: "Generate Linux shared lib"
     steps:
       - run:
-          name: Generate linux shared lib
+          name: Install dependencies
           command: |
             echo "Installing swig dependencies"
             sudo apt-get update
@@ -58,8 +58,13 @@ commands:
             make
             sudo make install
 
+      - run:
+          name: Generate linux shared lib
+          command: |
+
             ./blst/build.sh -D__BLST_PORTABLE__
             ./blst/bindings/java/run.me
+
       - persist_to_workspace:
           root: ./blst/bindings/java/supranational
           paths:
@@ -69,7 +74,7 @@ commands:
     description: "Generate macOS shared lib"
     steps:
       - run:
-          name: Generate mac os shared lib
+          name: Install dependencies
           command: |
             echo "Installing openjdk 11 for test execution"
             brew install openjdk@11
@@ -79,6 +84,9 @@ commands:
             brew install swig@4.0
             brew install gnu-sed
 
+      - run:
+          name: Generate mac os shared lib
+          command: |
             ./blst/build.sh -D__BLST_PORTABLE__
             ./blst/bindings/java/run.me
       - persist_to_workspace:
