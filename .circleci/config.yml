@@ -179,7 +179,7 @@ jobs:
       - attach_workspace:
           at: ~/jblst
       - run:
-          name: Create build
+          name: Copy BLST Sources
           command: |
 
             cd blst/bindings/java/
@@ -190,7 +190,12 @@ jobs:
             cp -r supranational/blst/Linux $RESOURCEDIR
             cp -r supranational/blst/Mac $RESOURCEDIR
             cp -r supranational/blst/Windows $RESOURCEDIR
+
+      - run:
+          name: Build Jar
+          command: |
             ./gradlew --no-daemon --parallel build
+
       - persist_to_workspace:
           root: .
           paths:
