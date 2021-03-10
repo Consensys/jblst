@@ -66,7 +66,7 @@ commands:
             ./bindings/java/run.me
 
       - persist_to_workspace:
-          root: ./blst/bindings/java/supranational
+          root: ./blst/bindings/java/supranational/blst/Linux
           paths:
             - ./
 
@@ -91,7 +91,7 @@ commands:
             ./build.sh -D__BLST_PORTABLE__
             ./bindings/java/run.me
       - persist_to_workspace:
-          root: ./blst/bindings/java/supranational
+          root: ./blst/bindings/java/supranational/blst/Mac
           paths:
             - ./
 
@@ -99,11 +99,15 @@ commands:
     description: "Generate windows shared lib"
     steps:
       - run:
-          name: Generate windows shared lib
+          name: Install dependencies
           command: |
             $ErrorActionPreference = 'SilentlyContinue'
             choco install mingw --force --x64
             choco install swig
+
+      - run:
+          name: Generate windows shared lib
+          command: |
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
 
