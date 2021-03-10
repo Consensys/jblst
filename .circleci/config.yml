@@ -184,7 +184,7 @@ jobs:
 
             cd blst/bindings/java/
             SRCDIR="../../../src/main/java/supranational/blst"
-            RESOURCEDIR="../../../src/main/resources/"
+            RESOURCEDIR="../../../src/main/resources/supranational/blst"
             mkdir -p $SRCDIR $RESOURCEDIR
             cp supranational/blst/*.java $SRCDIR
             cp -r supranational/blst/Linux $RESOURCEDIR
