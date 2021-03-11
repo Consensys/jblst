@@ -160,7 +160,7 @@ jobs:
       - checkout_code
       - prepare_linux
   arm64-linux-build:
-    executor: armv8_linux_executor
+    executor: linux_executor
     environment:
       - DOCKER_IMAGE=arm64v8/debian:buster
       - CONTAINER_DISTRO=debian:buster
