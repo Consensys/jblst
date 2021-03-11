@@ -35,13 +35,12 @@ commands:
             git submodule init
             git submodule update
 
-  prepare_linux:
-    description: "Generate Linux shared lib"
+  install_linux_swig4:
+    description: "Install Swig4"
     steps:
       - run:
-          name: Install dependencies
+          name: "Install Swig4"
           command: |
-            echo "Installing swig dependencies"
             sudo apt-get update
             sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex
 
@@ -54,8 +53,16 @@ commands:
             make
             sudo make install
 
+jobs:
+  x86-64-linux-build:
+    executor: linux_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - install_linux_swig4
       - run:
-          name: Generate linux shared lib
+          name: "Build Linux AMD Library"
           command: |
             cd blst
             ./build.sh -D__BLST_PORTABLE__
@@ -64,11 +71,50 @@ commands:
       - persist_to_workspace:
           root: ./
           paths:
-            - ./blst/bindings/java/supranational/
+          - ./blst/bindings/java/supranational/
 
-  prepare_macos:
-    description: "Generate macOS shared lib"
+
+  arm64-linux-build:
+    executor: linux_executor
+    environment:
+      - DOCKER_IMAGE=arm64v8/debian:buster
+      - CONTAINER_DISTRO=debian:buster
+      - PKG_RELEASE=buster
+      - PKG_DISTRO=debian
+      - EMU=on
+      - SKIP_GRADLE: true
     steps:
+      - checkout_code
+      - install_linux_swig4
+      - run:
+          name: "Install Cross Compiler"
+          command: |
+            sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - run:
+          name: "Generate ARM library"
+          command: |
+            cd blst
+            export CC=aarch64-linux-gnu-gcc
+            export CXX=aarch64-linux-gnu-g++
+            ./build.sh -D__BLST_PORTABLE__
+            cd bindings/java
+            ./build.sh
+
+            echo "Built successfully"
+            # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
+            mv supranational/blst/Linux/* supranational/blst/Linux/aarch64
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./blst/bindings/java/supranational/blst/Linux
+
+  mac-os-build:
+    executor: mac_os_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
       - run:
           name: Install dependencies
           command: |
@@ -91,9 +137,12 @@ commands:
           paths:
             - ./blst/bindings/java/supranational/blst/Mac
 
-  prepare_windows:
-    description: "Generate windows shared lib"
+  windows-build:
+    executor: win/default
+    environment:
+      SKIP_GRADLE: true
     steps:
+      - checkout_code
       - run:
           name: Install dependencies
           command: |
@@ -110,83 +159,11 @@ commands:
             cd blst
             .\build.bat -D__BLST_PORTABLE__
             sh .\bindings\java\run.me
-#            sh blst/bindings/java/run.me
-#            cp blst/bindings/java/blst.dll src/main/resources/x86_64/
       - persist_to_workspace:
           root: ./
           paths:
             - ./blst/bindings/java/supranational/blst/Windows
 
-  prepare_armv8:
-    description: "Prepare armv8"
-    steps:
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y autoconf libpcre3 libpcre3-dev bison flex gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
-
-            echo "Installing swig"
-            curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
-            tar -xzvf v4.0.2.tar.gz
-            cd swig-4.0.2/
-            sh autogen.sh
-            ./configure
-            make
-            sudo make install
-
-      - run:
-          name: Generate linux shared lib
-          command: |
-            cd blst
-            export CC=aarch64-linux-gnu-gcc
-            export CXX=aarch64-linux-gnu-g++
-            ./build.sh -D__BLST_PORTABLE__
-            cd bindings/java
-            ./build.sh
-
-            echo "Built successfully"
-            # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
-            mv supranational/blst/Linux/* supranational/blst/Linux/aarch64
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - ./blst/bindings/java/supranational/blst/Linux
-
-jobs:
-  x86-64-linux-build:
-    executor: linux_executor
-    environment:
-      SKIP_GRADLE: true
-    steps:
-      - checkout_code
-      - prepare_linux
-  arm64-linux-build:
-    executor: linux_executor
-    environment:
-      - DOCKER_IMAGE=arm64v8/debian:buster
-      - CONTAINER_DISTRO=debian:buster
-      - PKG_RELEASE=buster
-      - PKG_DISTRO=debian
-      - EMU=on
-      - SKIP_GRADLE: true
-    steps:
-      - checkout_code
-      - prepare_armv8
-  mac-os-build:
-    executor: mac_os_executor
-    environment:
-      SKIP_GRADLE: true
-    steps:
-      - checkout_code
-      - prepare_macos
-  windows-build:
-    executor: win/default
-    environment:
-      SKIP_GRADLE: true
-    steps:
-      - checkout_code
-      - prepare_windows
   assemble:
     executor: linux_executor
     steps:
