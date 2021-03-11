@@ -144,6 +144,7 @@ commands:
             ./build.sh -D__BLST_PORTABLE__
             ./bindings/java/build.sh
 
+            echo "Built successfully"
             # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
             mv bindings/java/supranational/blst/Linux/amd64 bindings/java/supranational/blst/Linux/aarch64
       - persist_to_workspace:
