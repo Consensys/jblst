@@ -64,9 +64,9 @@ jobs:
       - run:
           name: "Build Linux AMD Library"
           command: |
-            cd blst
-            ./build.sh -D__BLST_PORTABLE__
-            ./bindings/java/run.me
+            cd blst/bindings/java
+            ../../build.sh -D__BLST_PORTABLE__
+            ./run.me
 
       - persist_to_workspace:
           root: ./
@@ -94,11 +94,10 @@ jobs:
       - run:
           name: "Generate ARM library"
           command: |
-            cd blst
+            cd blst/bindings/java
             export CC=aarch64-linux-gnu-gcc
             export CXX=aarch64-linux-gnu-g++
-            ./build.sh -D__BLST_PORTABLE__
-            cd bindings/java
+            ../../build.sh -D__BLST_PORTABLE__
             ./build.sh
 
             echo "Built successfully"
@@ -129,9 +128,9 @@ jobs:
       - run:
           name: Generate mac os shared lib
           command: |
-            cd blst
-            ./build.sh -D__BLST_PORTABLE__
-            ./bindings/java/run.me
+            cd blst/bindings/java
+            ../../build.sh -D__BLST_PORTABLE__
+            ./run.me
       - persist_to_workspace:
           root: ./
           paths:
@@ -156,9 +155,9 @@ jobs:
             $Env:MSYSTEM = "MINGW"
             $Env:CC = "gcc"
 
-            cd blst
-            .\build.bat -D__BLST_PORTABLE__
-            sh .\bindings\java\run.me
+            cd blst\bindings\java
+            ..\..\build.bat -D__BLST_PORTABLE__
+            sh .\run.me
       - persist_to_workspace:
           root: ./
           paths:
