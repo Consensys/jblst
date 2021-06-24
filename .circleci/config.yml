@@ -17,7 +17,7 @@ executors:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
   mac_os_executor:
     macos:
-      xcode: "12.4.0"
+      xcode: "12.5.0"
     resource_class: medium
     working_directory: ~/jblst
     environment:
@@ -128,6 +128,7 @@ jobs:
       - run:
           name: Generate mac os shared lib
           command: |
+            export CFLAGS="-arch x86_64 -arch arm64"
             cd blst/bindings/java
             ../../build.sh -D__BLST_PORTABLE__
             ./run.me
