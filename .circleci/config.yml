@@ -130,6 +130,7 @@ jobs:
           command: |
             export CFLAGS="-arch x86_64 -arch arm64"
             export CXXFLAGS="-arch x86_64 -arch arm64"
+            export LDFLAGS="-arch x86_64 -arch arm64"
             cd blst/bindings/java
             ../../build.sh -D__BLST_PORTABLE__
             ./run.me
