@@ -129,7 +129,10 @@ jobs:
           name: Generate mac os shared lib
           command: |
             cd blst/bindings/java
-            ../../build.sh -D__BLST_PORTABLE__ -arch x86_64 -arch arm64
+            ../../build.sh "-D__BLST_PORTABLE__ -arch x86_64 -arch arm64"
+            ar -x libblst.a
+            rm libblst.a
+            libtool -static -o libblst.a server.o assembly.o
             ./run.me
       - persist_to_workspace:
           root: ./
