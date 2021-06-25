@@ -134,7 +134,7 @@ jobs:
             rm libblst.a
             libtool -static -o libblst.a server.o assembly.o
             ./run.me
-            // Not ideal but the swig expects to find the library under an arch specific dir
+            # Not ideal but the swig expects to find the library under an arch specific dir
             cp -rf supranational/blst/Mac/x86_64 supranational/blst/Mac/arm64
       - persist_to_workspace:
           root: ./
