@@ -96,7 +96,6 @@ jobs:
           command: |
             cd blst/bindings/java
             export CROSS_COMPILE=aarch64-linux-gnu-
-#            export CC=aarch64-linux-gnu-gcc
             export CXX=aarch64-linux-gnu-g++
             ../../build.sh -D__BLST_PORTABLE__
             ./build.sh
