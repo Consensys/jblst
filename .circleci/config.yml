@@ -89,13 +89,14 @@ jobs:
       - run:
           name: "Install Cross Compiler"
           command: |
-            sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
+            sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu ar-aarch64-linux-gnu nm-aarch64-linux-gnu
 
       - run:
           name: "Generate ARM library"
           command: |
             cd blst/bindings/java
-            export CC=aarch64-linux-gnu-gcc
+            export CROSS_COMPILE=aarch64-linux-gnu-
+#            export CC=aarch64-linux-gnu-gcc
             export CXX=aarch64-linux-gnu-g++
             ../../build.sh -D__BLST_PORTABLE__
             ./build.sh
