@@ -155,7 +155,9 @@ jobs:
             curl -L -o tdm64-gcc-10.3.0-2.exe https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tdm64-gcc-10.3.0-2.exe
             7z e tdm64-gcc-10.3.0-2.exe
             mkdir install
-            sh -c 'for x in *.tar.xz; do arc -folder-safe=false unarchive $x install; done'
+            for %%O IN (%*.tar.xz) DO (
+              arc -folder-safe=false unarchive %%O install
+            )
             set PATH="%PWD%/install/bin;%PATH%"
             cd ..
 
