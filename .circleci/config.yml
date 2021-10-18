@@ -152,10 +152,11 @@ jobs:
 
             mkdir tdm
             cd tdm
-            Invoke-WebRequest -Uri https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tm64-gcc-10.3.0-2.exe -OutFile tdm64-gcc-10.3.0-2.exe
+            curl -L -o tdm64-gcc-10.3.0-2.exe https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tdm64-gcc-10.3.0-2.exe
+            7z e tdm64-gcc-10.3.0-2.exe
             mkdir install
-            Get-ChildItem -Path '.\$PLUGINSDIR\' -Filter '*.tar.xz' | ForEach-Object{ (arc -folder-safe=false unarchive $_.fullname install) }
-            $Env:PATH = "$pwd\install\bin;$Env:PATH"
+            for x in *.tar.xz; do arc -folder-safe=false unarchive $x install; done
+            export PATH="$PWD/install/bin:$PATH"
             cd ..
 
       - run:
@@ -163,7 +164,7 @@ jobs:
           command: |
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
-            sh -c 'set -x; PATH=$(pwd)/tdm/install/bin:$PATH ./run.me'
+            sh ./run.me
       - persist_to_workspace:
           root: ./
           paths:
