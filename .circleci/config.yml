@@ -152,11 +152,19 @@ jobs:
 
             mkdir tdm
             cd tdm
+            echo "Downloading tdm"
             curl -L -o tdm64-gcc-10.3.0-2.exe https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tdm64-gcc-10.3.0-2.exe
+            echo "Got TDM. Dir now:"
+            dir
+            echo "Expanding TDM"
             7z e tdm64-gcc-10.3.0-2.exe
             mkdir install
+            echo "Expanded and created install dir"
             dir
+            echo "Expanding .tar.xz files to install"
             forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
+            echo "Install now contains"
+            dir install
             set PATH="%PWD%/install/bin;%PATH%"
             cd ..
 
