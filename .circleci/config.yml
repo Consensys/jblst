@@ -146,14 +146,21 @@ jobs:
           name: Install dependencies
           command: |
             $ErrorActionPreference = 'SilentlyContinue'
-            choco install mingw --force --x64
+            choco install archiver --force --x64
+            choco install 7zip --force --x64
             choco install swig
+
+            mkdir tdm
+            cd tdm
+            Invoke-WebRequest -Uri https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tm64-gcc-10.3.0-2.exe -OutFile tdm64-gcc-10.3.0-2.exe
+            mkdir install
+            Get-ChildItem -Path '.\$PLUGINSDIR\' -Filter '*.tar.xz' | ForEach-Object{ (arc -folder-safe=false unarchive $_.fullname install) }
+            $Env:PATH = "$pwd\install\bin;$Env:PATH"
+            cd ..
 
       - run:
           name: Generate windows shared lib
           command: |
-            $Env:MSYSTEM = "MINGW"
-
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
             sh .\run.me
