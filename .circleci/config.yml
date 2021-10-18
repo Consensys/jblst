@@ -156,7 +156,7 @@ jobs:
             7z e tdm64-gcc-10.3.0-2.exe
             mkdir install
             sh -c 'for x in *.tar.xz; do arc -folder-safe=false unarchive $x install; done'
-            export PATH="$PWD/install/bin:$PATH"
+            set PATH="%PWD%/install/bin;%PATH%"
             cd ..
 
       - run:
@@ -164,7 +164,7 @@ jobs:
           command: |
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
-            sh 'set -x; ./run.me'
+            sh .\run.me
       - persist_to_workspace:
           root: ./
           paths:
