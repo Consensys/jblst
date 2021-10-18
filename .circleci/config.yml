@@ -163,7 +163,6 @@ jobs:
           command: |
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
-            sh -c 'echo PATH=$(pwd)/tdm/install/bin:$PATH ./run.me'
             sh -c 'set -x; PATH=$(pwd)/tdm/install/bin:$PATH ./run.me'
       - persist_to_workspace:
           root: ./
