@@ -150,6 +150,9 @@ jobs:
             choco install 7zip --force --x64
             choco install swig
 
+      - run:
+          name: Install TDM
+          command: |
             mkdir tdm
             cd tdm
             echo "Downloading tdm"
