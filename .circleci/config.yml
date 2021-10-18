@@ -164,7 +164,7 @@ jobs:
           command: |
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
-            sh ./run.me
+            sh 'set +x; ./run.me'
       - persist_to_workspace:
           root: ./
           paths:
