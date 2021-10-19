@@ -142,6 +142,7 @@ jobs:
             # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
             mv supranational/blst/Mac/x86_64 supranational/blst/Mac/aarch64
 
+            echo "Building for x86"
             # Reset to compile for x86
             rm -rf libblst.a supranational.blst.jar
 
