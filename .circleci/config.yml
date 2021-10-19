@@ -169,6 +169,8 @@ jobs:
             echo "Install now contains"
             dir install
             set "PATH=C:\users\circleci\project\tdm\install\bin;%PATH%"
+            echo "Path is:"
+            echo %PATH%
             cd ..
 
       - run:
