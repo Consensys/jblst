@@ -129,14 +129,27 @@ jobs:
       - run:
           name: Generate mac os shared lib
           command: |
+            echo "Building for arm64"
             cd blst/bindings/java
-            ../../build.sh "-D__BLST_PORTABLE__ -arch x86_64 -arch arm64"
-            ar -x libblst.a
-            rm libblst.a
-            libtool -static -o libblst.a server.o assembly.o
+            rm -rf libblst.a supranational.blst.jar
+            rm -rf supranational
+
+            # CC for build of libblst.a
+            # CXX for build of SWIG layer
+            export CC="cc -arch arm64"
+            export CXX="c++ -arch arm64"
+            ../../build.sh "-D__BLST_PORTABLE__"
+            ./build.sh
+            # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
+            mv supranational/blst/Mac/x86_64 supranational/blst/Mac/aarch64
+
+            # Reset to compile for x86
+            rm -rf libblst.a supranational.blst.jar
+
+            export CC="cc"
+            export CXX="c++"
+            ../../build.sh "-D__BLST_PORTABLE__"
             ./run.me
-            # Not ideal but the swig expects to find the library under an arch specific dir
-            cp -rf supranational/blst/Mac/x86_64 supranational/blst/Mac/arm64
       - persist_to_workspace:
           root: ./
           paths:
