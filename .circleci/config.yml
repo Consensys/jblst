@@ -159,7 +159,6 @@ jobs:
             7z e tdm64-gcc-10.3.0-2.exe
             mkdir install
             forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
-            dir "$PWD\install\bin"
             cd ..
 
       - run:
