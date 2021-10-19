@@ -166,8 +166,8 @@ jobs:
             dir
             echo "Expanding .tar.xz files to install"
             forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
-            echo "Install now contains"
-            dir install
+            echo "Install\bin now contains"
+            dir "$PWD\install\bin"
             $Env:PATH = "$PWD\install\bin;$Env:PATH"
             echo "Path is:"
             echo $Env:PATH
@@ -176,6 +176,7 @@ jobs:
       - run:
           name: Generate windows shared lib
           command: |
+            $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
             echo "Path is: $Env:PATH"
