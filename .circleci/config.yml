@@ -168,7 +168,7 @@ jobs:
             forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
             echo "Install now contains"
             dir install
-            $Env:PATH = "C:\users\circleci\project\tdm\install\bin;$Env:PATH"
+            $Env:PATH = "$PWD\install\bin;$Env:PATH"
             echo "Path is:"
             echo $Env:PATH
             cd ..
@@ -178,6 +178,7 @@ jobs:
           command: |
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
+            echo "Path is: $Env:PATH"
             sh .\run.me
       - persist_to_workspace:
           root: ./
