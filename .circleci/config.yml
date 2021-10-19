@@ -168,9 +168,9 @@ jobs:
             forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
             echo "Install now contains"
             dir install
-            set "PATH=C:\users\circleci\project\tdm\install\bin;%PATH%"
+            $Env:PATH = "C:\users\circleci\project\tdm\install\bin;$Env:PATH"
             echo "Path is:"
-            echo %PATH%
+            echo $Env:PATH
             cd ..
 
       - run:
