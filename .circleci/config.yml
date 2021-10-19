@@ -168,7 +168,7 @@ jobs:
             forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
             echo "Install now contains"
             dir install
-            set PATH=%PATH%;%CD%\install\bin;"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
+            set "PATH=%CD%\install\bin;"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin";%PATH%"
             cd ..
 
       - run:
