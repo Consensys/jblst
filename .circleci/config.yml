@@ -168,7 +168,7 @@ jobs:
             forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
             echo "Install now contains"
             dir install
-            set PATH="%PWD%/install/bin;%PATH%"
+            set PATH="%CD%\install\bin;%PATH%"
             cd ..
 
       - run:
