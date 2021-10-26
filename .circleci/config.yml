@@ -185,7 +185,7 @@ jobs:
           command: |
             $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
             cd blst\bindings\java
-            sh ..\..\build.sh -D__BLST_PORTABLE__
+            ..\..\build.bat -D__BLST_PORTABLE__
             sh .\run.me
       - persist_to_workspace:
           root: ./
