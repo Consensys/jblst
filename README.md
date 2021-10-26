@@ -1,21 +1,19 @@
-<div align="left">
-  <img src=jblst.png>
-</div>
-
 # jblst
 
-Java wrapper around Blst BLS native library from Supranational
-https://github.com/supranational/blst
+[![Build Status](https://circleci.com/gh/ConsenSys/jblst.svg?style=svg)](https://circleci.com/gh/ConsenSys/workflows/jblst)
+
+Java wrapper around [Blst BLS native library from Supranational](https://github.com/supranational/blst)
+
 
 # Dependency 
 
-```xml
-<dependency>
-  <groupId>tech.pegasys</groupId>
-  <artifactId>jblst</artifactId>
-  <version>0.2.0-RELEASE</version>
-  <type>pom</type>
-</dependency>
+```groovy
+repositories {
+  maven { url "https://artifacts.consensys.net/public/maven/maven/" }
+}
+dependencies {
+  dependency "tech.pegasys:jblst:<version>"
+}
 ```
 
 # Minimal sample
@@ -34,6 +32,7 @@ blst.keygen(sk, new byte[] {11}, null);
   - Windows
   - Linux
   - MacOS
-- ARMv8
+- aarch64
   - Linux
+  - MacOS
 
