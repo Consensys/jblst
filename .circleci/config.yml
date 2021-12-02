@@ -163,7 +163,7 @@ jobs:
             brew install gnu-sed
 
       - run:
-          name: Generate mac os shared lib
+          name: Generate mac os shared lib (Portable)
           command: |
             echo "Building for arm64"
             cd blst/bindings/java
@@ -187,6 +187,40 @@ jobs:
             export CXX="c++"
             ../../build.sh "-D__BLST_PORTABLE__"
             ./run.me
+
+            mkdir portable
+            mv supranational/blst/Mac/* portable/
+
+      - run:
+          name: Generate mac os shared lib (Optimised)
+          command: |
+            echo "Building for arm64"
+            cd blst/bindings/java
+            rm -rf libblst.a supranational.blst.jar
+            rm -rf supranational
+
+            # CC for build of libblst.a
+            # CXX for build of SWIG layer
+            export CC="cc -arch arm64"
+            export CXX="c++ -arch arm64"
+            ../../build.sh 
+            ./build.sh
+            # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
+            mv supranational/blst/Mac/x86_64 supranational/blst/Mac/aarch64
+
+            echo "Building for x86"
+            # Reset to compile for x86
+            rm -rf libblst.a supranational.blst.jar
+
+            export CC="cc"
+            export CXX="c++"
+            ../../build.sh
+            ./run.me
+            
+            mkdir optimised
+            mv supranational/blst/Mac/* optimised/
+            mv portable/* optimised supranational/blst/Mac/
+
       - persist_to_workspace:
           root: ./
           paths:
