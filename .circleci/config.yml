@@ -296,7 +296,7 @@ jobs:
             ..\..\build.bat
             sh .\run.me
             mkdir supranational\blst\Windows\optimised
-            mv supranational\blst\Windows\* supranational\blst\Windows\optimised\
+            mv supranational\blst\Windows\amd64 supranational\blst\Windows\optimised\
       - persist_to_workspace:
           root: ./
           paths:
