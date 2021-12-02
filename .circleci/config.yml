@@ -263,6 +263,45 @@ jobs:
           paths:
             - ./blst/bindings/java/supranational/blst/Windows
 
+  windows-optimised-build:
+    executor: win/default
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - run:
+          name: Install dependencies
+          command: |
+            $ErrorActionPreference = 'SilentlyContinue'
+            choco install archiver --force --x64
+            choco install 7zip --force --x64
+            choco install swig
+
+      - run:
+          name: Install TDM
+          command: |
+            mkdir tdm
+            cd tdm
+            curl -OutFile tdm64-gcc-10.3.0-2.exe -Uri https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tdm64-gcc-10.3.0-2.exe
+            7z e tdm64-gcc-10.3.0-2.exe
+            mkdir install
+            forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
+            cd ..
+
+      - run:
+          name: Generate windows shared lib
+          command: |
+            $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
+            cd blst\bindings\java
+            ..\..\build.bat
+            sh .\run.me
+            mkdir supranational\blst\Windows\optimised
+            mv supranational\blst\Windows\* supranational\blst\Windows\optimised\
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./blst/bindings/java/supranational/blst/Windows
+
   assemble:
     executor: linux_executor
     steps:
@@ -334,12 +373,19 @@ workflows:
               <<: *filters-release-tags
           context:
             - dockerhub-quorumengineering-ro
+      - windows-optimised-build:
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - dockerhub-quorumengineering-ro
       - assemble:
           requires:
             - x86-64-linux-build
             - arm64-linux-build
             - mac-os-build
             - windows-build
+            - windows-optimised-build
           filters:
             tags:
               <<: *filters-release-tags
