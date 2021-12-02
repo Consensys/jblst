@@ -83,7 +83,6 @@ jobs:
             mkdir optimised
             mv supranational/blst/Linux/* optimised/
 
-            rm -rf supranational/blst/Linux/*
             mv portable/* optimised supranational/blst/Linux/
 
       - persist_to_workspace:
@@ -110,7 +109,7 @@ jobs:
             sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
 
       - run:
-          name: "Generate ARM library"
+          name: "Generate ARM library (Portable)"
           command: |
             cd blst/bindings/java
             export CROSS_COMPILE=aarch64-linux-gnu-
@@ -119,8 +118,28 @@ jobs:
             ./build.sh
 
             echo "Built successfully"
+            mkdir portable
             # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
-            mv supranational/blst/Linux/* supranational/blst/Linux/aarch64
+            mv supranational/blst/Linux/* portable/aarch64
+            rm -rf supranational/blst/Linux/*
+
+      - run:
+          name: "Generate ARM library (Optimised)"
+          command: |
+            cd blst/bindings/java
+            rm -rf libblst.a supranational.blst.jar
+            export CROSS_COMPILE=aarch64-linux-gnu-
+            export CXX=aarch64-linux-gnu-g++
+            ../../build.sh
+            ./build.sh
+
+            echo "Built successfully"
+            # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
+            mkdir optimised 
+            mv supranational/blst/Linux/* optimised/aarch64
+
+            mv portable/* optimised supranational/blst/Linux/
+
       - persist_to_workspace:
           root: ./
           paths:
