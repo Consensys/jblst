@@ -74,8 +74,7 @@ jobs:
       - run:
           name: "Build Linux AMD Library (Optimised)"
           command: |
-            
-            echo "Building optimised"
+            cd blst/bindings/java
             # Reset to compile for x86
             rm -rf libblst.a supranational.blst.jar
             ../../build.sh
