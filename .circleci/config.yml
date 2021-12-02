@@ -65,7 +65,7 @@ jobs:
           name: "Build Linux AMD Library"
           command: |
             cd blst/bindings/java
-            ../../build.sh -D__BLST_PORTABLE__
+            ../../build.sh
             ./run.me
 
       - persist_to_workspace:
@@ -97,7 +97,7 @@ jobs:
             cd blst/bindings/java
             export CROSS_COMPILE=aarch64-linux-gnu-
             export CXX=aarch64-linux-gnu-g++
-            ../../build.sh -D__BLST_PORTABLE__
+            ../../build.sh
             ./build.sh
 
             echo "Built successfully"
@@ -137,7 +137,7 @@ jobs:
             # CXX for build of SWIG layer
             export CC="cc -arch arm64"
             export CXX="c++ -arch arm64"
-            ../../build.sh "-D__BLST_PORTABLE__"
+            ../../build.sh
             ./build.sh
             # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
             mv supranational/blst/Mac/x86_64 supranational/blst/Mac/aarch64
@@ -148,7 +148,7 @@ jobs:
 
             export CC="cc"
             export CXX="c++"
-            ../../build.sh "-D__BLST_PORTABLE__"
+            ../../build.sh
             ./run.me
       - persist_to_workspace:
           root: ./
@@ -185,7 +185,7 @@ jobs:
           command: |
             $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
             cd blst\bindings\java
-            ..\..\build.bat -D__BLST_PORTABLE__
+            ..\..\build.bat
             sh .\run.me
       - persist_to_workspace:
           root: ./
