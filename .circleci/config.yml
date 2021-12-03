@@ -62,11 +62,28 @@ jobs:
       - checkout_code
       - install_linux_swig4
       - run:
-          name: "Build Linux AMD Library"
+          name: "Build Linux AMD Library (Portable)"
           command: |
             cd blst/bindings/java
             ../../build.sh -D__BLST_PORTABLE__
             ./run.me
+            
+            mkdir portable
+            mv supranational/blst/Linux/* portable/
+
+      - run:
+          name: "Build Linux AMD Library (Optimised)"
+          command: |
+            cd blst/bindings/java
+            # Reset to compile for x86
+            rm -rf libblst.a supranational.blst.jar
+            ../../build.sh
+            ./run.me
+            
+            mkdir optimised
+            mv supranational/blst/Linux/* optimised/
+
+            mv portable/* optimised supranational/blst/Linux/
 
       - persist_to_workspace:
           root: ./
@@ -92,7 +109,7 @@ jobs:
             sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
 
       - run:
-          name: "Generate ARM library"
+          name: "Generate ARM library (Portable)"
           command: |
             cd blst/bindings/java
             export CROSS_COMPILE=aarch64-linux-gnu-
@@ -101,8 +118,28 @@ jobs:
             ./build.sh
 
             echo "Built successfully"
+            mkdir portable
             # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
-            mv supranational/blst/Linux/* supranational/blst/Linux/aarch64
+            mv supranational/blst/Linux/* portable/aarch64
+            rm -rf supranational/blst/Linux/*
+
+      - run:
+          name: "Generate ARM library (Optimised)"
+          command: |
+            cd blst/bindings/java
+            rm -rf libblst.a supranational.blst.jar
+            export CROSS_COMPILE=aarch64-linux-gnu-
+            export CXX=aarch64-linux-gnu-g++
+            ../../build.sh
+            ./build.sh
+
+            echo "Built successfully"
+            # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
+            mkdir optimised 
+            mv supranational/blst/Linux/* optimised/aarch64
+
+            mv portable/* optimised supranational/blst/Linux/
+
       - persist_to_workspace:
           root: ./
           paths:
@@ -126,7 +163,7 @@ jobs:
             brew install gnu-sed
 
       - run:
-          name: Generate mac os shared lib
+          name: Generate mac os shared lib (Portable)
           command: |
             echo "Building for arm64"
             cd blst/bindings/java
@@ -150,6 +187,40 @@ jobs:
             export CXX="c++"
             ../../build.sh "-D__BLST_PORTABLE__"
             ./run.me
+
+            mkdir portable
+            mv supranational/blst/Mac/* portable/
+
+      - run:
+          name: Generate mac os shared lib (Optimised)
+          command: |
+            echo "Building for arm64"
+            cd blst/bindings/java
+            rm -rf libblst.a supranational.blst.jar
+            rm -rf supranational
+
+            # CC for build of libblst.a
+            # CXX for build of SWIG layer
+            export CC="cc -arch arm64"
+            export CXX="c++ -arch arm64"
+            ../../build.sh 
+            ./build.sh
+            # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
+            mv supranational/blst/Mac/x86_64 supranational/blst/Mac/aarch64
+
+            echo "Building for x86"
+            # Reset to compile for x86
+            rm -rf libblst.a supranational.blst.jar
+
+            export CC="cc"
+            export CXX="c++"
+            ../../build.sh
+            ./run.me
+            
+            mkdir optimised
+            mv supranational/blst/Mac/* optimised/
+            mv portable/* optimised supranational/blst/Mac/
+
       - persist_to_workspace:
           root: ./
           paths:
@@ -187,6 +258,45 @@ jobs:
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
             sh .\run.me
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./blst/bindings/java/supranational/blst/Windows
+
+  windows-optimised-build:
+    executor: win/default
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - run:
+          name: Install dependencies
+          command: |
+            $ErrorActionPreference = 'SilentlyContinue'
+            choco install archiver --force --x64
+            choco install 7zip --force --x64
+            choco install swig
+
+      - run:
+          name: Install TDM
+          command: |
+            mkdir tdm
+            cd tdm
+            curl -OutFile tdm64-gcc-10.3.0-2.exe -Uri https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tdm64-gcc-10.3.0-2.exe
+            7z e tdm64-gcc-10.3.0-2.exe
+            mkdir install
+            forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
+            cd ..
+
+      - run:
+          name: Generate windows shared lib
+          command: |
+            $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
+            cd blst\bindings\java
+            ..\..\build.bat
+            sh .\run.me
+            mkdir supranational\blst\Windows\optimised
+            mv supranational\blst\Windows\amd64 supranational\blst\Windows\optimised\
       - persist_to_workspace:
           root: ./
           paths:
@@ -263,12 +373,19 @@ workflows:
               <<: *filters-release-tags
           context:
             - dockerhub-quorumengineering-ro
+      - windows-optimised-build:
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - dockerhub-quorumengineering-ro
       - assemble:
           requires:
             - x86-64-linux-build
             - arm64-linux-build
             - mac-os-build
             - windows-build
+            - windows-optimised-build
           filters:
             tags:
               <<: *filters-release-tags
