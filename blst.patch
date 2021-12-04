@@ -1,0 +1,28 @@
+commit 5e8c286808afc43a2fa25b58df0dfd6de8f01190
+Author: Adrian Sutton <adrian.sutton@consensys.net>
+Date:   Thu Dec 2 21:35:28 2021 +1000
+
+    bindings/blst.swg: facilitate custom Java Native Interface library path.
+    
+    This makes the native library loading significantly more flexible. In
+    particular, applications can embed native components built for both
+    optimised and portable profiles and dynamically select which to load
+    at runtime.
+    
+    Fixes #91.
+
+diff --git a/bindings/blst.swg b/bindings/blst.swg
+index ab9a0a7..0f72d53 100644
+--- a/bindings/blst.swg
++++ b/bindings/blst.swg
+@@ -350,7 +350,9 @@ import java.nio.file.*;
+                                 + "/" + System.getProperty("os.arch")
+                                 + "/" + libName;
+     static {
+-        InputStream res = $imclassname.class.getResourceAsStream(resName);
++        Class<?> imClazz = $imclassname.class;
++        InputStream res = imClazz.getResourceAsStream(
++                        System.getProperty(imClazz.getPackageName() + ".jniResource", resName));
+         if (res == null) {
+             try {
+                 System.loadLibrary("$module");
