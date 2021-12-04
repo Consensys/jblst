@@ -321,6 +321,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/jblst
+      - apply_patches
       - run:
           name: Copy BLST Sources
           command: |
