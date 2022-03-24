@@ -34,14 +34,6 @@ commands:
           command: |
             git submodule init
             git submodule update
-  apply_patches:
-    description: "Prepare - Apply Patches"
-    steps:
-      - run:
-          name: "Apply patches"
-          command: |
-            cd blst
-            git apply ../blst.patch
 
   install_linux_swig4:
     description: "Install Swig4"
@@ -69,7 +61,6 @@ jobs:
     steps:
       - checkout_code
       - install_linux_swig4
-      - apply_patches
       - run:
           name: "Build Linux AMD Library (Portable)"
           command: |
@@ -112,7 +103,6 @@ jobs:
     steps:
       - checkout_code
       - install_linux_swig4
-      - apply_patches
       - run:
           name: "Install Cross Compiler"
           command: |
@@ -161,7 +151,6 @@ jobs:
       SKIP_GRADLE: true
     steps:
       - checkout_code
-      - apply_patches
       - run:
           name: Install dependencies
           command: |
@@ -243,7 +232,6 @@ jobs:
       SKIP_GRADLE: true
     steps:
       - checkout_code
-      - apply_patches
       - run:
           name: Install dependencies
           command: |
@@ -281,7 +269,6 @@ jobs:
       SKIP_GRADLE: true
     steps:
       - checkout_code
-      - apply_patches
       - run:
           name: Install dependencies
           command: |
@@ -321,7 +308,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/jblst
-      - apply_patches
       - run:
           name: Copy BLST Sources
           command: |
