@@ -402,6 +402,10 @@ workflows:
           filters:
             tags:
               <<: *filters-release-tags
+            branches:
+              only:
+                - master
+                - /^release-.*/
           context:
             - quorum-gradle
             - dockerhub-quorumengineering-ro
