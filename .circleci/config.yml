@@ -257,7 +257,13 @@ jobs:
             $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
             cd blst\bindings\java
             ..\..\build.bat -D__BLST_PORTABLE__
-            sh .\run.me
+            if (-not $?) {
+              throw 'Build failed'
+            }
+            sh .\run.me -D__BLST_PORTABLE__
+            if (-not $?) {
+              throw 'Tests failed'
+            }
       - persist_to_workspace:
           root: ./
           paths:
@@ -295,6 +301,9 @@ jobs:
             cd blst\bindings\java
             ..\..\build.bat
             sh .\run.me
+            if (-not $?) {
+              throw "Tests failed"
+            }
             mkdir supranational\blst\Windows\optimised
             mv supranational\blst\Windows\amd64 supranational\blst\Windows\optimised\
       - persist_to_workspace:
