@@ -142,3 +142,12 @@ task printVersion() {
     print "Specific version: ${specificVersion}  Publish version: ${project.version}"
   }
 }
+
+task checkJarContents() {
+  doLast {
+    exec {
+      executable project.file("src/test/bash/checkResources.sh")
+      args "${project.jar.outputs.files.getFiles()[0]}"
+    }
+  }
+}

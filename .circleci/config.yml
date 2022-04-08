@@ -326,6 +326,11 @@ jobs:
           command: |
             ./gradlew --no-daemon --parallel build
 
+      - run:
+          name: Check Jar
+          command: |
+            ./gradlew --no-daemon checkJarContents
+
       - persist_to_workspace:
           root: .
           paths:
@@ -343,7 +348,7 @@ jobs:
       - run:
           name: Publish
           command: |
-            ./gradlew --no-daemon --parallel publish
+            ./gradlew --no-daemon --parallel checkJarContents publish
 
 workflows:
   version: 2
