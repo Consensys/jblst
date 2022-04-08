@@ -260,7 +260,7 @@ jobs:
             if (-not $?) {
               throw 'Build failed'
             }
-            sh .\run.me
+            sh JAVA_PACKAGE=foo .\run.me -D__BLST_PORTABLE__
             if (-not $?) {
               throw 'Tests failed'
             }
@@ -300,7 +300,7 @@ jobs:
             $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
             cd blst\bindings\java
             ..\..\build.bat
-            sh .\run.me
+            sh JAVA_PACKAGE=foo .\run.me
             if (-not $?) {
               throw "Tests failed"
             }
