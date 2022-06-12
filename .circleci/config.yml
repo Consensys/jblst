@@ -173,7 +173,7 @@ jobs:
             # CC for build of libblst.a
             # CXX for build of SWIG layer
             export CC="cc -arch arm64"
-            export CXX="c++ -arch arm64"
+            export CXX="c++ -arch arm64 -std=c++11"
             ../../build.sh "-D__BLST_PORTABLE__"
             ./build.sh
             # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
@@ -184,7 +184,7 @@ jobs:
             rm -rf libblst.a supranational.blst.jar
 
             export CC="cc"
-            export CXX="c++"
+            export CXX="c++ -std=c++11"
             ../../build.sh "-D__BLST_PORTABLE__"
             ./run.me
 
@@ -202,7 +202,7 @@ jobs:
             # CC for build of libblst.a
             # CXX for build of SWIG layer
             export CC="cc -arch arm64"
-            export CXX="c++ -arch arm64"
+            export CXX="c++ -arch arm64 -std=c++11"
             ../../build.sh 
             ./build.sh
             # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
@@ -213,7 +213,7 @@ jobs:
             rm -rf libblst.a supranational.blst.jar
 
             export CC="cc"
-            export CXX="c++"
+            export CXX="c++ -std=c++11"
             ../../build.sh
             ./run.me
             
