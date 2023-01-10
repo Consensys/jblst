@@ -368,31 +368,31 @@ workflows:
             tags: &filters-release-tags
               only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - arm64-linux-build:
           filters:
             tags:
               <<: *filters-release-tags
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - mac-os-build:
           filters:
             tags:
               <<: *filters-release-tags
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - windows-build:
           filters:
             tags:
               <<: *filters-release-tags
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - windows-optimised-build:
           filters:
             tags:
               <<: *filters-release-tags
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - assemble:
           requires:
             - x86-64-linux-build
@@ -404,7 +404,7 @@ workflows:
             tags:
               <<: *filters-release-tags
           context:
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
       - publish:
           requires:
             - assemble
@@ -416,5 +416,5 @@ workflows:
                 - master
                 - /^release-.*/
           context:
-            - quorum-gradle
-            - dockerhub-quorumengineering-ro
+            - protocols-dockerhub
+            - protocols-cloudsmith
