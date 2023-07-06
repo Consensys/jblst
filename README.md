@@ -5,7 +5,7 @@
 
 Java wrapper around [Blst BLS native library from Supranational](https://github.com/supranational/blst)
 
-# Dependency 
+# Dependency test
 
 ```groovy
 repositories {
