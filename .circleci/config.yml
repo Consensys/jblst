@@ -42,6 +42,7 @@ commands:
           name: "Install Swig4"
           command: |
             echo "deb http://archive.debian.org/debian stretch main contrib non-free" | sudo tee -a /etc/apt/sources.list
+            sudo sed -i s/security.debian.org/archive.debian.org/g /etc/apt/sources.list
             sudo apt-get update
             sudo apt-get install -y automake autoconf libpcre3 libpcre3-dev bison flex
             echo "Installing swig"
