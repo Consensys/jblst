@@ -85,7 +85,7 @@ publishing {
       }
       pom {
         name = "${project.name}"
-        url = 'http://github.com/ConsenSys/jblst'
+        url = 'http://github.com/Consensys/jblst'
         licenses {
           license {
             name = 'The Apache License, Version 2.0'
@@ -93,9 +93,9 @@ publishing {
           }
         }
         scm {
-          connection = 'scm:git:git://github.com/ConsenSys/jblst.git'
-          developerConnection = 'scm:git:ssh://github.com/ConsenSys/jblst.git'
-          url = 'https://github.com/ConsenSys/jblst'
+          connection = 'scm:git:git://github.com/Consensys/jblst.git'
+          developerConnection = 'scm:git:ssh://github.com/Consensys/jblst.git'
+          url = 'https://github.com/Consensys/jblst'
         }
       }
     }
