@@ -128,22 +128,22 @@ jobs:
       - run:
           name: Generate macOS shared lib
           command: |
-            echo "Building for arm64"
+            echo "Building for x86"
             cd blst/bindings/java
             rm -rf libblst.a supranational.blst.jar
             rm -rf supranational
 
             # CC for build of libblst.a
             # CXX for build of SWIG layer
-            export CC="cc -arch arm64"
-            export CXX="c++ -arch arm64 -std=c++11"
+            export CC="cc -arch x86_64"
+            export CXX="c++ -arch x86_64 -std=c++11"
             ../../build.sh "-D__BLST_PORTABLE__"
             ./build.sh
-            # os.arch of this JVM is x86_64, but we cross compiled so move to the right directory
-            mv supranational/blst/Mac/x86_64 supranational/blst/Mac/aarch64
+            # os.arch of this JVM is aarch64, but we cross compiled so move to the right directory
+            mv supranational/blst/Mac/aarch64 supranational/blst/Mac/x86_64
 
-            echo "Building for x86"
-            # Reset to compile for x86
+            echo "Building for arm64"
+            # Reset to compile for arm64
             rm -rf libblst.a supranational.blst.jar
 
             export CC="cc"
