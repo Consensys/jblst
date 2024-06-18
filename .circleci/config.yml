@@ -18,7 +18,7 @@ executors:
   mac_os_executor:
     macos:
       xcode: "12.5.1"
-    resource_class: medium
+    resource_class: macos.m1.medium.gen1
     working_directory: ~/jblst
     environment:
       GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
