@@ -178,6 +178,8 @@ jobs:
     needs: [x86-64-linux-build, arm64-linux-build, mac-os-build, windows-build]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-java@v4
         with:
@@ -250,6 +252,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: recursive
 
       - uses: actions/setup-java@v4
@@ -268,5 +271,5 @@ jobs:
           CLOUDSMITH_USER: ${{ secrets.CLOUDSMITH_USER }}
           CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
         run: |
-          ./gradlew --no-daemon --parallel --info cloudsmithUpload publish
+          ./gradlew --no-daemon --parallel checkJarContents publish
 
