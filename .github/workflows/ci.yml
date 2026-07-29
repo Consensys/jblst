@@ -11,6 +11,9 @@ on:
     branches:
       - master
 
+permissions:
+   contents: read
+
 env:
   GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
 
@@ -238,6 +241,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    environment: publish    
     needs: assemble
     if: >-
       github.ref == 'refs/heads/master' ||
@@ -259,5 +263,10 @@ jobs:
           name: assembled-workspace
           path: .
 
-      - name: Publish
-        run: ./gradlew --no-daemon --parallel checkJarContents publish
+      - name: Publish to Cloudsmith
+        env:
+          CLOUDSMITH_USER: ${{ secrets.CLOUDSMITH_USER }}
+          CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
+        run: |
+          ./gradlew --no-daemon --parallel --info cloudsmithUpload publish
+
