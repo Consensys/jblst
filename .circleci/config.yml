@@ -1,0 +1,295 @@
+---
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
+executors:
+  linux_executor:
+    docker:
+      - image: cimg/openjdk:17.0.8
+        auth:
+          username: $DOCKER_USER_RO
+          password: $DOCKER_PASSWORD_RO
+    resource_class: medium
+    working_directory: ~/jblst
+    environment:
+      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
+  mac_os_executor:
+    macos:
+      xcode: "16.4.0"
+    resource_class: macos.m1.medium.gen1
+    working_directory: ~/jblst
+    environment:
+      GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
+      HOMEBREW_NO_AUTO_UPDATE: true
+
+commands:
+  checkout_code:
+    description: "Prepare - Checkout code"
+    steps:
+      - checkout
+      - run:
+          name: "Pull Submodules"
+          command: |
+            git submodule init
+            git submodule update
+
+  install_linux_swig4:
+    description: "Install Swig4"
+    steps:
+      - run:
+          name: "Install Swig4"
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y automake autoconf libpcre2-dev bison flex
+            echo "Installing swig"
+            curl -L -O https://github.com/swig/swig/archive/v4.4.1.tar.gz
+            tar -xzvf v4.4.1.tar.gz
+            cd swig-4.4.1/
+            sh autogen.sh
+            ./configure
+            make
+            sudo make install
+
+jobs:
+  x86-64-linux-build:
+    executor: linux_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - install_linux_swig4
+      - run:
+          name: "Build Linux AMD Library"
+          command: |
+            cd blst/bindings/java
+            ../../build.sh -D__BLST_PORTABLE__
+            ./run.me
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+          - ./blst/bindings/java/supranational/
+
+
+  arm64-linux-build:
+    executor: linux_executor
+    environment:
+      - DOCKER_IMAGE=arm64v8/debian:buster
+      - CONTAINER_DISTRO=debian:buster
+      - PKG_RELEASE=buster
+      - PKG_DISTRO=debian
+      - EMU=on
+      - SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - install_linux_swig4
+      - run:
+          name: "Install Cross Compiler"
+          command: |
+            sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - run:
+          name: "Generate ARM library"
+          command: |
+            cd blst/bindings/java
+            export CROSS_COMPILE=aarch64-linux-gnu-
+            export CXX=aarch64-linux-gnu-g++
+            ../../build.sh -D__BLST_PORTABLE__
+            ./build.sh
+
+            echo "Built successfully"
+            # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
+            mv supranational/blst/Linux/* supranational/blst/Linux/aarch64
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./blst/bindings/java/supranational/blst/Linux
+
+  mac-os-build:
+    executor: mac_os_executor
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - run:
+          name: Install dependencies
+          command: |
+            
+            echo "Installing swig"
+            brew install swig
+            brew install gnu-sed
+
+      - run:
+          name: Generate macOS shared lib
+          command: |
+            echo "Building for x86"
+            cd blst/bindings/java
+            rm -rf libblst.a supranational.blst.jar
+            rm -rf supranational
+
+            # CC for build of libblst.a
+            # CXX for build of SWIG layer
+            export CC="cc -arch x86_64"
+            export CXX="c++ -arch x86_64 -std=c++11"
+            ../../build.sh "-D__BLST_PORTABLE__"
+            ./build.sh
+            # os.arch of this JVM is aarch64, but we cross compiled so move to the right directory
+            mv supranational/blst/Mac/aarch64 supranational/blst/Mac/x86_64
+
+            echo "Building for arm64"
+            # Reset to compile for arm64
+            rm -rf libblst.a supranational.blst.jar
+
+            export CC="cc"
+            export CXX="c++ -std=c++11"
+            ../../build.sh "-D__BLST_PORTABLE__"
+            ./run.me
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./blst/bindings/java/supranational/blst/Mac
+
+  windows-build:
+    executor: win/default
+    environment:
+      SKIP_GRADLE: true
+    steps:
+      - checkout_code
+      - run:
+          name: Install dependencies
+          command: |
+            $ErrorActionPreference = 'SilentlyContinue'
+            choco install archiver --force --x64
+            choco install 7zip --force --x64
+            choco install swig
+
+      - run:
+          name: Install TDM
+          command: |
+            mkdir tdm
+            cd tdm
+            curl -OutFile tdm64-gcc-10.3.0-2.exe -Uri https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tdm64-gcc-10.3.0-2.exe
+            7z e tdm64-gcc-10.3.0-2.exe
+            mkdir install
+            forfiles /M *.tar.xz /C "CMD /c arc -folder-safe=false unarchive @path install"
+            cd ..
+
+      - run:
+          name: Generate windows shared lib
+          command: |
+            $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
+            cd blst\bindings\java
+            sh .\run.me -D__BLST_PORTABLE__
+            if (-not $?) {
+              throw 'Build or Tests failed'
+            }
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - ./blst/bindings/java/supranational/blst/Windows
+
+  assemble:
+    executor: linux_executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/jblst
+      - run:
+          name: Copy BLST Sources
+          command: |
+
+            cd blst/bindings/java/
+            SRCDIR="../../../src/main/java/supranational/blst"
+            RESOURCEDIR="../../../src/main/resources/supranational/blst"
+            mkdir -p $SRCDIR $RESOURCEDIR
+            cp supranational/blst/*.java $SRCDIR
+            cp -r supranational/blst/Linux $RESOURCEDIR
+            cp -r supranational/blst/Mac $RESOURCEDIR
+            cp -r supranational/blst/Windows $RESOURCEDIR
+
+      - run:
+          name: Build Jar
+          command: |
+            ./gradlew --no-daemon --parallel build
+
+      - run:
+          name: Check Jar
+          command: |
+            ./gradlew --no-daemon checkJarContents
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./
+
+      - store_artifacts:
+          name: Store Jar
+          path: build/libs
+  publish:
+    executor: linux_executor
+    steps:
+      - checkout_code
+      - attach_workspace:
+          at: .
+      - run:
+          name: Publish
+          command: |
+            ./gradlew --no-daemon --parallel checkJarContents publish
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - x86-64-linux-build:
+          filters:
+            tags: &filters-release-tags
+              only: /^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?/
+          context:
+            - protocols-dockerhub
+      - arm64-linux-build:
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - protocols-dockerhub
+      - mac-os-build:
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - protocols-dockerhub
+      - windows-build:
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - protocols-dockerhub
+      - assemble:
+          requires:
+            - x86-64-linux-build
+            - arm64-linux-build
+            - mac-os-build
+            - windows-build
+          filters:
+            tags:
+              <<: *filters-release-tags
+          context:
+            - protocols-dockerhub
+      - publish:
+          requires:
+            - assemble
+          filters:
+            tags:
+              <<: *filters-release-tags
+            branches:
+              only:
+                - master
+                - /^release-.*/
+          context:
+            - protocols-dockerhub
+            - protocols-cloudsmith
