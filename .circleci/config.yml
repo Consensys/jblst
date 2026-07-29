@@ -183,10 +183,9 @@ jobs:
           command: |
             $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
             cd blst\bindings\java
-            ..\..\build.bat -D__BLST_PORTABLE__
             sh .\run.me -D__BLST_PORTABLE__
             if (-not $?) {
-              throw 'Tests failed'
+              throw 'Build or Tests failed'
             }
 
       - persist_to_workspace:
