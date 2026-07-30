@@ -1,6 +1,7 @@
 plugins {
     id 'maven-publish'
     id 'org.ajoberstar.grgit' version '4.1.1'
+    id 'org.jreleaser' version '1.14.0'
 }
 
 rootProject.version = calculatePublishVersion()
@@ -54,7 +55,7 @@ artifacts {
 }
 
 wrapper {
-    gradleVersion = "6.5.1"
+    gradleVersion = "7.6.4"
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -71,6 +72,10 @@ publishing {
         password = cloudsmithKey
       }
     }
+    maven {
+      name = "local"
+      url = layout.buildDirectory.dir('staging-deploy')
+    }
   }
   publications {
     mavenJava(MavenPublication) {
@@ -78,6 +83,7 @@ publishing {
       version project.version
       from components.java
       artifact sourcesJar
+      artifact javadocJar
 
       versionMapping {
         usage('java-api') { fromResolutionOf('runtimeClasspath') }
@@ -85,17 +91,48 @@ publishing {
       }
       pom {
         name = "${project.name}"
-        url = 'http://github.com/Consensys/jblst'
+        description = 'Java bindings for the BLST BLS12-381 signature library'
+        url = 'https://github.com/Consensys/jblst'
         licenses {
           license {
             name = 'The Apache License, Version 2.0'
             url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
           }
         }
+        developers {
+          developer {
+            name = 'Consensys'
+            email = 'protocols@consensys.net'
+            organization = 'Consensys'
+            organizationUrl = 'https://consensys.net'
+          }
+        }
         scm {
           connection = 'scm:git:git://github.com/Consensys/jblst.git'
           developerConnection = 'scm:git:ssh://github.com/Consensys/jblst.git'
           url = 'https://github.com/Consensys/jblst'
+        }
+      }
+    }
+  }
+}
+
+jreleaser {
+  project {
+    description = 'Java bindings for the BLST BLS12-381 signature library'
+    copyright = 'Consensys'
+  }
+  signing {
+    active = 'ALWAYS'
+    armored = true
+  }
+  deploy {
+    maven {
+      mavenCentral {
+        sonatype {
+          active = 'ALWAYS'
+          url = 'https://central.sonatype.com/api/v1/publisher'
+          stagingRepositories.add('build/staging-deploy')
         }
       }
     }
