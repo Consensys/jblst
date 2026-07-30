@@ -244,9 +244,11 @@ jobs:
   # check on checkResources.sh loses - it may need permissions to +x
   publish:
     runs-on: ubuntu-latest
-    environment: publish    
+    environment: publish
     needs: assemble
     if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # 7.0.1
         with:
@@ -270,6 +272,24 @@ jobs:
           CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
         run: |
           ./gradlew --no-daemon --parallel checkJarContents publish
+
+      - name: Determine Prerelease
+        id: determine-prerelease
+        run: |
+          if [[ "${{ github.ref_name }}" == *-RC* ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
+        with:
+          files: build/libs/*.jar
+          tag_name: ${{ github.ref_name }}
+          draft: true
+          prerelease: ${{ steps.determine-prerelease.outputs.prerelease }}
+          preserve_order: true
 
   publish-maven-central:
     runs-on: ubuntu-latest
