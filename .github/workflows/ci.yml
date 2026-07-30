@@ -1,0 +1,276 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-**'
+  pull_request:
+    branches:
+      - master
+
+permissions:
+   contents: read
+
+env:
+  GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2
+
+jobs:
+  x86-64-linux-build:
+    runs-on: ubuntu-latest
+    env:
+      SKIP_GRADLE: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # 7.0.1
+        with:
+          submodules: recursive
+
+      - name: Install Swig4
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y automake autoconf libpcre2-dev bison flex
+          curl -L -O https://github.com/swig/swig/archive/v4.4.1.tar.gz
+          tar -xzvf v4.4.1.tar.gz
+          cd swig-4.4.1/
+          sh autogen.sh
+          ./configure
+          make
+          sudo make install
+
+      - name: Build Linux AMD Library
+        run: |
+          cd blst/bindings/java
+          ../../build.sh -D__BLST_PORTABLE__
+          ./run.me
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # 7.0.1
+        with:
+          name: linux-x86-64-native
+          path: blst/bindings/java/supranational/
+
+  arm64-linux-build:
+    runs-on: ubuntu-latest
+    env:
+      SKIP_GRADLE: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # 7.0.1
+        with:
+          submodules: recursive
+
+      - name: Install Swig4
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y automake autoconf libpcre2-dev bison flex
+          curl -L -O https://github.com/swig/swig/archive/v4.4.1.tar.gz
+          tar -xzvf v4.4.1.tar.gz
+          cd swig-4.4.1/
+          sh autogen.sh
+          ./configure
+          make
+          sudo make install
+
+      - name: Install Cross Compiler
+        run: sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: Generate ARM library
+        run: |
+          cd blst/bindings/java
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CXX=aarch64-linux-gnu-g++
+          ../../build.sh -D__BLST_PORTABLE__
+          ./build.sh
+          # arch is determined in Java based on the current CPU but we're cross compiling, so need to rename
+          mv supranational/blst/Linux/* supranational/blst/Linux/aarch64
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # 7.0.1
+        with:
+          name: linux-arm64-native
+          path: blst/bindings/java/supranational/blst/Linux/
+
+  mac-os-build:
+    runs-on: macos-latest
+    env:
+      SKIP_GRADLE: true
+      HOMEBREW_NO_AUTO_UPDATE: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # 7.0.1
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          brew install swig
+          brew install gnu-sed
+
+      - name: Generate macOS shared lib
+        run: |
+          cd blst/bindings/java
+          rm -rf libblst.a supranational.blst.jar supranational
+
+          echo "Building for x86"
+          export CC="cc -arch x86_64"
+          export CXX="c++ -arch x86_64 -std=c++11"
+          ../../build.sh "-D__BLST_PORTABLE__"
+          ./build.sh
+          # os.arch of this JVM is aarch64, but we cross compiled so move to the right directory
+          mv supranational/blst/Mac/aarch64 supranational/blst/Mac/x86_64
+
+          echo "Building for arm64"
+          rm -rf libblst.a supranational.blst.jar
+          export CC="cc"
+          export CXX="c++ -std=c++11"
+          ../../build.sh "-D__BLST_PORTABLE__"
+          ./run.me
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # 7.0.1
+        with:
+          name: macos-native
+          path: blst/bindings/java/supranational/blst/Mac/
+
+  windows-build:
+    runs-on: windows-latest
+    env:
+      SKIP_GRADLE: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # 7.0.1
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'SilentlyContinue'
+          choco install archiver --force --x64
+          choco install 7zip --force --x64
+          choco install swig
+
+      - name: Install TDM GCC
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path tdm | Out-Null
+          Set-Location tdm
+          curl.exe -L -o tdm64-gcc-10.3.0-2.exe https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm64-2/tdm64-gcc-10.3.0-2.exe
+          7z e tdm64-gcc-10.3.0-2.exe
+          New-Item -ItemType Directory -Force -Path install | Out-Null
+          Get-ChildItem -Filter *.tar.xz | ForEach-Object {
+            arc -folder-safe=false unarchive $_.FullName install
+          }
+
+      - name: Generate Windows shared lib
+        shell: powershell
+        run: |
+          $Env:PATH = "$PWD\tdm\install\bin;$Env:PATH"
+          Set-Location blst\bindings\java
+          sh .\run.me -D__BLST_PORTABLE__
+          if (-not $?) {
+            throw 'Build or Tests failed'
+          }
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # 7.0.1
+        with:
+          name: windows-native
+          path: blst/bindings/java/supranational/blst/Windows/
+
+  assemble:
+    runs-on: ubuntu-latest
+    needs: [x86-64-linux-build, arm64-linux-build, mac-os-build, windows-build]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # 7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95  #5.6.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Download Linux x86_64 native
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  #8.0.1
+        with:
+          name: linux-x86-64-native
+          path: blst/bindings/java/supranational/
+
+      - name: Download Linux ARM64 native
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  #8.0.1
+        with:
+          name: linux-arm64-native
+          path: blst/bindings/java/supranational/blst/Linux/
+
+      - name: Download macOS native
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  #8.0.1
+        with:
+          name: macos-native
+          path: blst/bindings/java/supranational/blst/Mac/
+
+      - name: Download Windows native
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  #8.0.1
+        with:
+          name: windows-native
+          path: blst/bindings/java/supranational/blst/Windows/
+
+      - name: Copy BLST Sources
+        run: |
+          cd blst/bindings/java/
+          SRCDIR="../../../src/main/java/supranational/blst"
+          RESOURCEDIR="../../../src/main/resources/supranational/blst"
+          mkdir -p "$SRCDIR" "$RESOURCEDIR"
+          cp supranational/blst/*.java "$SRCDIR"
+          cp -r supranational/blst/Linux "$RESOURCEDIR"
+          cp -r supranational/blst/Mac "$RESOURCEDIR"
+          cp -r supranational/blst/Windows "$RESOURCEDIR"
+
+      - name: Build Jar
+        run: ./gradlew --no-daemon --parallel build
+
+      - name: Check Jar
+        run: ./gradlew --no-daemon checkJarContents
+
+      - name: Store Jar
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # 7.0.1
+        with:
+          name: jar
+          path: build/libs/
+
+      - name: Store assembled workspace
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # 7.0.1
+        with:
+          name: assembled-workspace
+          path: |
+            src/
+            build/
+
+  # check on checkResources.sh loses - it may need permissions to +x
+  publish:
+    runs-on: ubuntu-latest
+    environment: publish    
+    needs: assemble
+    if: >-
+      github.ref == 'refs/heads/master' ||
+      startsWith(github.ref, 'refs/heads/release-') ||
+      startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # 7.0.1
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95  #5.6.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Download assembled workspace
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  #8.0.1
+        with:
+          name: assembled-workspace
+          path: .
+
+      - name: Publish to Cloudsmith
+        env:
+          CLOUDSMITH_USER: ${{ secrets.CLOUDSMITH_USER }}
+          CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
+        run: |
+          ./gradlew --no-daemon --parallel checkJarContents publish
+
