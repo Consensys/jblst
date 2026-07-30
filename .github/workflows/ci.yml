@@ -30,10 +30,10 @@ jobs:
       - name: Install Swig4
         run: |
           sudo apt-get update
-          sudo apt-get install -y automake autoconf libpcre3 libpcre3-dev bison flex
-          curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
-          tar -xzvf v4.0.2.tar.gz
-          cd swig-4.0.2/
+          sudo apt-get install -y automake autoconf libpcre2-dev bison flex
+          curl -L -O https://github.com/swig/swig/archive/v4.4.1.tar.gz
+          tar -xzvf v4.4.1.tar.gz
+          cd swig-4.4.1/
           sh autogen.sh
           ./configure
           make
@@ -62,10 +62,10 @@ jobs:
       - name: Install Swig4
         run: |
           sudo apt-get update
-          sudo apt-get install -y automake autoconf libpcre3 libpcre3-dev bison flex
-          curl -L -O https://github.com/swig/swig/archive/v4.0.2.tar.gz
-          tar -xzvf v4.0.2.tar.gz
-          cd swig-4.0.2/
+          sudo apt-get install -y automake autoconf libpcre2-dev bison flex
+          curl -L -O https://github.com/swig/swig/archive/v4.4.1.tar.gz
+          tar -xzvf v4.4.1.tar.gz
+          cd swig-4.4.1/
           sh autogen.sh
           ./configure
           make
@@ -241,6 +241,7 @@ jobs:
             src/
             build/
 
+  # check on checkResources.sh loses - it may need permissions to +x
   publish:
     runs-on: ubuntu-latest
     environment: publish    
